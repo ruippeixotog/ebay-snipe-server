@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
  * Time: 1:54:46 PM
  */
 public abstract class ActiveRecord extends HashBacked {
-  private static boolean sDBDisabled = false;
+  private static boolean sDBDisabled = true;
   private static ArrayList<Table> sTables = new ArrayList<Table>();
 
   public static void disableDatabase() {

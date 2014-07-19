@@ -15,7 +15,6 @@ import com.jbidwatcher.util.ToolInterface;
 import com.jbidwatcher.util.StringTools;
 import com.jbidwatcher.util.html.JHTML;
 import com.jbidwatcher.util.webserver.SimpleProxy;
-import com.jbidwatcher.my.MyJBidwatcher;
 import com.jbidwatcher.search.SearchManager;
 import com.jbidwatcher.search.Searcher;
 
@@ -239,7 +238,6 @@ public class JBTool implements ToolInterface {
       if(option.startsWith("file=")) mParseFile = option.substring(5);
       if(option.startsWith("bidfile=")) testBidHistory(option.substring(8));
       if(option.startsWith("adult")) JConfig.setConfiguration("ebay.mature", "true");
-      if(option.startsWith("upload=")) MyJBidwatcher.getInstance().sendFile(new File(option.substring(7)), "http://my.jbidwatcher.com/upload/log", "cyberfox@jbidwatcher.com", "This is a <test> of descriptions & stuff.");
     }
 
     if(!mLogin) {

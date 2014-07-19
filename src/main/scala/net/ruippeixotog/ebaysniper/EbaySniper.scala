@@ -2,11 +2,8 @@ package net.ruippeixotog.ebaysniper
 
 import com.jbidwatcher.auction.server.ebay.ebayServer
 import com.jbidwatcher.util.Currency
-import com.jbidwatcher.util.db.ActiveRecord
 
 object EbaySniper extends App {
-  ActiveRecord.disableDatabase()
-
   val password = "<password>"
   val server = new ebayServer("ebay.com", "ruipeixotog", password)
   val auctionId = "121388541004"
