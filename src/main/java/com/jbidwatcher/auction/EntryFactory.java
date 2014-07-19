@@ -1,6 +1,5 @@
 package com.jbidwatcher.auction;
 
-import com.jbidwatcher.ui.AuctionsManager;
 import com.jbidwatcher.util.Observer;
 import com.jbidwatcher.util.StringTools;
 import com.jbidwatcher.util.config.JConfig;
@@ -63,7 +62,6 @@ public class EntryFactory extends Observer<AuctionEntry> {
     if (aeNew != null) {
       if (label != null) aeNew.setCategory(label);
       EntryCorral.getInstance().put(aeNew);
-      AuctionsManager.getInstance().addEntry(aeNew);
       MQFactory.getConcrete("Swing").enqueue("Added [ " + aeNew.getIdentifier() + ", " + aeNew.getTitle() + " ]");
     } else {
       if(interactive) MQFactory.getConcrete("Swing").enqueue("Cannot add auction " + aucId + ", either invalid or\ncommunication error talking to server.");

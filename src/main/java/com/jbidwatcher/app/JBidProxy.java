@@ -16,7 +16,6 @@ import com.jbidwatcher.util.*;
 import com.jbidwatcher.util.Currency;
 import com.jbidwatcher.util.Constants;
 import com.jbidwatcher.util.queue.MQFactory;
-import com.jbidwatcher.ui.AuctionsManager;
 import com.jbidwatcher.auction.server.AuctionServerManager;
 import com.jbidwatcher.auction.server.AuctionServer;
 import com.jbidwatcher.util.webserver.AbstractMiniServer;
@@ -253,7 +252,6 @@ public class JBidProxy extends AbstractMiniServer {
   }
 
   public StringBuffer index() {
-    AuctionsManager.getInstance().saveAuctions();
     return checkError(AuctionTransformer.outputHTML(JConfig.queryConfiguration("savefile", "auctions.xml")));
   }
 
@@ -324,7 +322,6 @@ public class JBidProxy extends AbstractMiniServer {
     AuctionEntry auctionEntry = EntryFactory.getInstance().conditionallyAddEntry(false, identifier, null);
 
     //show Overview
-    AuctionsManager.getInstance().saveAuctions();
     return checkError(AuctionTransformer.outputHTML(JConfig.queryConfiguration("savefile", "auctions.xml")));
   }
 

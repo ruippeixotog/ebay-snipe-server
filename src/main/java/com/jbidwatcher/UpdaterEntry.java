@@ -11,7 +11,6 @@ import com.jbidwatcher.util.xml.XMLParseException;
 import com.jbidwatcher.util.xml.XMLElement;
 import com.jbidwatcher.util.xml.XMLSerializeSimple;
 import com.jbidwatcher.util.xml.XMLInterface;
-import com.jbidwatcher.ui.util.OptionUI;
 import com.jbidwatcher.util.http.Http;
 import com.jbidwatcher.util.Constants;
 
@@ -223,11 +222,5 @@ public class UpdaterEntry extends XMLSerializeSimple {
 
     JConfig.setConfiguration("updates.lastConfig", Long.toString(lastStamp));
     if(cfgChanged) JConfig.updateComplete();
-    if(alert != null) {
-      OptionUI oui = new OptionUI();
-      Dimension aboutBoxSize = new Dimension(495, 245);
-
-      oui.showHTMLDisplay(alert, aboutBoxSize, Constants.PROGRAM_NAME + " News Alert...");
-    }
   }
 }
