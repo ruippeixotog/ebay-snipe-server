@@ -68,7 +68,7 @@ public abstract class AuctionCore extends ActiveRecord {
   //  public String getHighBidderEmail() { return getString("highBidderEmail"); }
   public String getItemLocation() { return getString("itemLocation", ""); }
 
-  public boolean isComplete() { return getBoolean("ended"); }
+  public boolean isComplete() { return getEndDate().before(new Date()); }
 
   public Currency getBestPrice() {
     Currency currentPrice = getCurBid();

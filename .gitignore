@@ -1,3 +1,6 @@
 .idea
 .idea_modules
-target
+
+target/
+logs/
+src/main/resources/application.conf
