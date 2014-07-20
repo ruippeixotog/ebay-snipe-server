@@ -57,7 +57,7 @@ public class JConfig {
   //  Were there any configuration changes since the last updateComplete()?
   private static boolean _anyUpdates = false;
   private static boolean mScripting = false;
-  private static LoggerInterface mLogger = new NullLogger();
+  private static LoggerInterface mLogger = new Slf4jLogger();
 
   //  A core loader which loads from an InputStream.  Used so that we can
   //  load config files from a resource in a JAR file.

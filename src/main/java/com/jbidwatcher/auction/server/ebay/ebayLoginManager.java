@@ -171,7 +171,6 @@ public class ebayLoginManager implements LoginManager {
     }
 
     String msg = "Getting the sign in cookie for " + T.getCountrySiteName();
-      System.out.println(msg);
 
     JConfig.log().logDebug(msg);
     MQFactory.getConcrete("Swing").enqueue(msg);
