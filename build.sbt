@@ -1,8 +1,8 @@
-name := "scala-ebay-sniper"
-
-version := "0.1-SNAPSHOT"
+name := "ebay-snipe-server"
 
 organization := "net.ruippeixotog"
+
+version := "0.1-SNAPSHOT"
 
 scalaVersion := "2.11.1"
 
