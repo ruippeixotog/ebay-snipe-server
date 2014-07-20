@@ -1,3 +1,6 @@
+import com.typesafe.sbt.SbtNativePackager._
+import NativePackagerKeys._
+
 name := "ebay-snipe-server"
 
 organization := "net.ruippeixotog"
@@ -19,3 +22,7 @@ libraryDependencies ++= Seq(
   "io.spray"                   %% "spray-can"       % "1.3.1-20140423",
   "io.spray"                   %% "spray-json"      % "1.2.6",
   "io.spray"                   %% "spray-routing"   % "1.3.1-20140423")
+
+packageArchetype.java_server
+
+sources in (Compile, doc) := Nil
