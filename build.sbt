@@ -26,3 +26,13 @@ libraryDependencies ++= Seq(
 packageArchetype.java_server
 
 sources in (Compile, doc) := Nil
+
+mappings in Universal ++= Seq(
+  file("src/main/resources/application.conf") -> "conf/application.conf",
+  file("src/main/resources/logback.xml") -> "conf/logback.xml")
+
+mappings in (Compile, packageBin) ~= { _.filterNot { case (_, name) =>
+  Seq("application.conf", "logback.xml").contains(name)
+}}
+
+scriptClasspath += "../conf"
