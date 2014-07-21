@@ -27,12 +27,18 @@ packageArchetype.java_server
 
 sources in (Compile, doc) := Nil
 
-mappings in Universal ++= Seq(
-  file("src/main/resources/application.conf") -> "conf/application.conf",
-  file("src/main/resources/logback.xml") -> "conf/logback.xml")
+// the resources to provide in the conf folder instead of inside the JAR file
+val confResources = Seq("application.conf", "logback.xml")
 
-mappings in (Compile, packageBin) ~= { _.filterNot { case (_, name) =>
-  Seq("application.conf", "logback.xml").contains(name)
+// copy the confResources to the conf folder...
+mappings in Universal <++= (resourceDirectory in Compile) map { resDir =>
+  confResources.map { resName => resDir / resName -> ("conf/" + resName) }
+}
+
+// ...and do not include them inside the JAR
+mappings in (Compile, packageBin) ~= { _.filterNot {
+  case (s, name) => confResources.contains(name)
 }}
 
+// include the conf folder in the classpath when the start script is executed
 scriptClasspath += "../conf"
