@@ -44,16 +44,16 @@ object SnipeServer extends App with SimpleRoutingApp with RoutingLogging {
             }
           } ~
           post {
-            entity(as[SnipeInfo]) { sInfo =>
+            entity(as[SnipeInfo]) { reqInfo =>
               complete {
-                scheduler.snipeTimeFor(auctionId, sInfo.snipeTime) match {
+                scheduler.snipeTimeFor(auctionId, reqInfo.snipeTime) match {
                   case None => BadRequest -> "The auction has already ended."
 
                   case sTime =>
                     snipes.get(auctionId).foreach(_.cancel())
 
-                    val completeInfo = sInfo.copy(auctionId = auctionId, snipeTime = sTime)
-                    val snipe = new Snipe(completeInfo)
+                    val sInfo = reqInfo.copy(auctionId = auctionId, snipeTime = sTime)
+                    val snipe = new Snipe(sInfo)
                     snipes += (auctionId -> snipe)
 
                     snipe.activate().onComplete { res =>
@@ -69,7 +69,7 @@ object SnipeServer extends App with SimpleRoutingApp with RoutingLogging {
                       snipes -= auctionId
                     }
 
-                    completeInfo
+                    sInfo
                 }
               }
             }
