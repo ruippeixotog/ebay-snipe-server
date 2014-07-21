@@ -8,6 +8,7 @@ import net.ruippeixotog.ebaysniper.util.Implicits._
 import net.ruippeixotog.ebaysniper.util.Logging
 
 import scala.concurrent.{CancellationException, Future, Promise}
+import scala.util.Try
 
 case class SnipeInfo(auctionId: String, bid: Currency, quantity: Int, snipeTime: Option[Date])
 
@@ -22,10 +23,10 @@ class Snipe(val info: SnipeInfo)(implicit ebay: ebayServer) extends Logging {
       promise = Promise[Int]()
       timer = new Timer(s"${info.auctionId}-snipe", true)
 
-      timer.schedule(promise.trySuccess {
+      timer.schedule(promise.complete(Try {
         log.info("Now sniping {}", info)
         ebay.bid(info.auctionId, info.bid, info.quantity)
-      }, info.snipeTime.getOrElse(new Date))
+      }), info.snipeTime.getOrElse(new Date))
 
       log.info("Scheduled snipe {}", info)
       promise.future
