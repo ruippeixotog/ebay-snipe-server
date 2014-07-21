@@ -86,6 +86,9 @@ object SnipeServer extends App with SimpleRoutingApp with RoutingLogging {
         pathEnd {
           get { complete(ebay.create(auctionId)) }
         }
+      } ~
+      path("snipes") {
+        get { complete(snipes.values.map(_.info)) }
       }
     }
   }
