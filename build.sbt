@@ -25,6 +25,8 @@ libraryDependencies ++= Seq(
 
 packageArchetype.java_server
 
+mainClass in Compile := Some("net.ruippeixotog.ebaysniper.SnipeServer")
+
 sources in (Compile, doc) := Nil
 
 // the resources to provide in the conf folder instead of inside the JAR file
@@ -37,7 +39,7 @@ mappings in Universal <++= (resourceDirectory in Compile) map { resDir =>
 
 // ...and do not include them inside the JAR
 mappings in (Compile, packageBin) ~= { _.filterNot {
-  case (s, name) => confResources.contains(name)
+  case (_, name) => confResources.contains(name)
 }}
 
 // include the conf folder in the classpath when the start script is executed
