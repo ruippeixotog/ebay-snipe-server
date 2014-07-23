@@ -322,7 +322,6 @@ public class ebayBidder implements com.jbidwatcher.auction.Bidder {
     if(JConfig.queryConfiguration("sound.enable", "false").equals("true")) MQFactory.getConcrete("sfx").enqueue("/audio/bid.mp3");
 
     CookieJar cj = mLogin.getNecessaryCookie(false);
-      System.out.println("COOKIE IS " + cj);
     JHTML.Form bidForm;
 
     try {
