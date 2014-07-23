@@ -21,7 +21,7 @@ trait SnipeManagement {
   private[this] var _snipes = Map.empty[String, Snipe]
   def snipes = _snipes
 
-  val scheduler = SnipeScheduler()
+  lazy val scheduler = SnipeScheduler()
 
   def loadSnipesFromFile() {
     snipes.values.foreach(_.cancel())
