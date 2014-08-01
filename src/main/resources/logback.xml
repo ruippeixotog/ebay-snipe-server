@@ -20,6 +20,6 @@
     <logger name="net.ruippeixotog" level="DEBUG" />
 
     <root level="INFO">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="LOG_FILES" />
     </root>
 </configuration>
