@@ -26,21 +26,18 @@ trait SnipeManagement {
   def loadSnipesFromFile() {
     snipes.values.foreach(_.cancel())
 
-    _snipes = snipesFile match {
+    snipesFile match {
       case Some(file) =>
         log.info(s"Using {} for persisting snipe data", file)
         if(new File(file).exists()) {
-          Source.fromFile(file).mkString.parseJson.convertTo[List[SnipeInfo]].map { sInfo =>
-            val snipe = new Snipe(sInfo)
-            snipe.activate()
-            sInfo.auctionId -> snipe
-          }.toMap
-        } else Map.empty[String, Snipe]
+          for(sInfo <- Source.fromFile(file).mkString.parseJson.convertTo[List[SnipeInfo]]) {
+            registerAndActivate(new Snipe(sInfo))
+          }
+        }
 
       case None =>
         log.warn("No persistent file for storing snipe data was specified. Any configured snipe " +
           "will be lost if the server is terminated")
-        Map.empty[String, Snipe]
     }
   }
 
