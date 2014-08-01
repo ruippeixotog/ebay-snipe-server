@@ -55,8 +55,12 @@ trait SnipeManagement {
 
     snipe.activate().onComplete { res =>
       res match {
+        case Success(status) if Snipe.isSuccess(status) =>
+          log.info("Completed snipe {} with success status {}", snipe.info, status)
+
         case Success(status) =>
-          log.info("Completed snipe {} with status {}", snipe.info, status)
+          log.warn("Completed snipe {} with error status {} - {}", snipe.info, status.toString,
+            Snipe.statusMessage(status))
 
         case Failure(e: CancellationException) =>
           log.info("The snipe {} was cancelled", snipe.info)
