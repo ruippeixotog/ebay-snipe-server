@@ -51,8 +51,6 @@ object SnipeServer extends App with SimpleRoutingApp with RoutingLogging with Sn
                   case None => BadRequest -> "The auction has already ended."
 
                   case sTime =>
-                    snipes.get(auctionId).foreach(_.cancel())
-
                     val sInfo = reqInfo.copy(auctionId = auctionId, snipeTime = sTime)
                     registerAndActivate(new Snipe(sInfo))
                     sInfo

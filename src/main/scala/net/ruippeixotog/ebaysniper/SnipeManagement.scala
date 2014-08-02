@@ -28,7 +28,7 @@ trait SnipeManagement {
 
     snipesFile match {
       case Some(file) =>
-        log.info(s"Using {} for persisting snipe data", file)
+        log.info("Using {} for persisting snipe data", file)
         if(new File(file).exists()) {
           for(sInfo <- Source.fromFile(file).mkString.parseJson.convertTo[List[SnipeInfo]]) {
             registerAndActivate(new Snipe(sInfo))
@@ -50,7 +50,13 @@ trait SnipeManagement {
   }
 
   def registerAndActivate(snipe: Snipe) {
-    _snipes += (snipe.info.auctionId -> snipe)
+    val auctionId = snipe.info.auctionId
+
+    // cancel the previous snipe, if exists
+    snipes.get(auctionId).foreach(_.cancel())
+
+    // add the new snipe to the map
+    _snipes += (auctionId -> snipe)
     saveSnipesToFile()
 
     snipe.activate().onComplete { res =>
@@ -67,8 +73,10 @@ trait SnipeManagement {
 
         case Failure(e) => log.error(s"The snipe ${snipe.info} failed", e)
       }
-      _snipes -= snipe.info.auctionId
-      saveSnipesToFile()
+      if(snipes.get(auctionId) == Some(snipe)) {
+        _snipes -= auctionId
+        saveSnipesToFile()
+      }
     }
   }
 }
