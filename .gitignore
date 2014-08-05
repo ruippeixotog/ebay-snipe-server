@@ -4,3 +4,4 @@
 target/
 logs/
 src/main/resources/application.conf
+snipes.json
