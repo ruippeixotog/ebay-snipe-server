@@ -488,7 +488,7 @@ public class XMLElement implements XMLSerialize, XMLInterface {
   /**
    * Reads an XML definition from a java.io.Reader and parses it.
    *
-   * @exception java.io.IOException
+   * @exception IOException
    *    if an error occured while reading the input
    * @exception XMLParseException
    *    if an error occured while parsing the read data
@@ -501,7 +501,7 @@ public class XMLElement implements XMLSerialize, XMLInterface {
   /**
    * Reads an XML definition from a java.io.Reader and parses it.
    *
-   * @exception java.io.IOException
+   * @exception IOException
    *    if an error occured while reading the input
    * @exception XMLParseException
    *    if an error occured while parsing the read data

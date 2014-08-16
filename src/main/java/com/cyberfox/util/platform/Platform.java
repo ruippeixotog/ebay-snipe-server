@@ -95,7 +95,7 @@ public class Platform {
 
   public static void checkLaF(String lookAndFeel) {
     if (isRawMac()) {
-      if (UIManager.getLookAndFeel().getClass().getName().equals(lookAndFeel)) {
+      if (javax.swing.UIManager.getLookAndFeel().getClass().getName().equals(lookAndFeel)) {
         JConfig.setConfiguration("mac.aqua", "true");
       } else {
         JConfig.setConfiguration("mac.aqua", "false");

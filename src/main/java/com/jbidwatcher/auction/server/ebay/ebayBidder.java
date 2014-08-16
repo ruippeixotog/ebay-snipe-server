@@ -103,7 +103,7 @@ public class ebayBidder implements com.jbidwatcher.auction.Bidder {
    * @param inCurr - The amount to bid.
    * @return - A Form object containing all the input fields from the bid-confirmation page's form.
    *
-   * @throws com.jbidwatcher.auction.BadBidException - If there's some kind of an error on the bid confirmation page.
+   * @throws BadBidException - If there's some kind of an error on the bid confirmation page.
    */
   public JHTML.Form getBidForm(CookieJar cj, AuctionInfo inEntry, Currency inCurr) throws BadBidException {
     String bidRequest = Externalized.getString("ebayServer.protocol") + T.s("ebayServer.bidHost") + Externalized.getString("ebayServer.V3file");

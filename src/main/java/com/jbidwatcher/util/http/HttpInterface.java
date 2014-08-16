@@ -21,7 +21,7 @@ public interface HttpInterface {
 
   URLConnection postFormPage(String url, String cgiData, String cookie, String referer, boolean followRedirects);
 
-  URLConnection makeRequest(URL source, String cookie) throws IOException;
+  URLConnection makeRequest(URL source, String cookie) throws java.io.IOException;
 
   ByteBuffer getURL(URL url);
 

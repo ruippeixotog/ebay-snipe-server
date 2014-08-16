@@ -4,11 +4,11 @@ import java.io.File;
 
 /**
  * Created by IntelliJ IDEA.
- * User: Morgan
- * Date: Dec 20, 2008
- * Time: 3:17:26 PM
- * To change this template use File | Settings | File Templates.
- */
+* User: Morgan
+* Date: Dec 20, 2008
+* Time: 3:17:26 PM
+* To change this template use File | Settings | File Templates.
+*/
 class NullLogger implements LoggerInterface {
   public void logDebug(String foo) { }
   public void logMessage(String foo) { }

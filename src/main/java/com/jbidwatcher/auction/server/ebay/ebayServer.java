@@ -11,11 +11,9 @@ package com.jbidwatcher.auction.server.ebay;
 //  logic outside this class.  A pipe-dream, perhaps, but it seems
 //  mostly doable.
 
-import com.cyberfox.util.config.*;
 import com.jbidwatcher.util.config.*;
 import com.jbidwatcher.util.Externalized;
 import com.jbidwatcher.auction.server.ServerMenu;
-import com.jbidwatcher.util.config.JConfig;
 import com.jbidwatcher.util.queue.*;
 import com.jbidwatcher.util.queue.TimerHandler;
 import com.jbidwatcher.util.html.JHTML;
@@ -36,7 +34,7 @@ import java.util.regex.Pattern;
 import java.io.FileNotFoundException;
 
 /** @noinspection OverriddenMethodCallInConstructor*/
-public final class ebayServer extends AuctionServer implements MessageQueue.Listener, com.cyberfox.util.config.JConfig.ConfigListener {
+public final class ebayServer extends AuctionServer implements MessageQueue.Listener,JConfig.ConfigListener {
   private final static ebayCurrencyTables sCurrencies = new ebayCurrencyTables();
   private TT T;
 
@@ -206,7 +204,7 @@ public final class ebayServer extends AuctionServer implements MessageQueue.List
         mSearcher.loadSearchString(SearchManager.getSearchById((Long) ac.getData()), ac.getLabel(), false);
         return;
       case AuctionQObject.LOAD_TITLE:
-        mSearcher.loadSearchString(SearchManager.getSearchById((Long) ac.getData()), ac.getLabel(), true);
+        mSearcher.loadSearchString(SearchManager.getSearchById((Long)ac.getData()), ac.getLabel(), true);
         return;
       case AuctionQObject.LOAD_SELLER:
         doGetSelling(SearchManager.getSearchById((Long) ac.getData()), ac.getLabel());

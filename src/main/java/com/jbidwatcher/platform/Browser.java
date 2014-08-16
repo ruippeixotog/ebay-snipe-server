@@ -45,7 +45,7 @@ public class Browser extends JConfig implements MessageQueue.Listener {
     }
 
     try {
-      BrowserLauncher.openURL(url, launchCommand, JConfig.queryConfiguration("browser.override", "false").equals("true"));
+      BrowserLauncher.openURL(url, launchCommand, JConfig.queryConfiguration("browser.override","false").equals("true"));
     } catch(IOException e) {
       JConfig.log().handleException("Launching browser", e);
       return false;

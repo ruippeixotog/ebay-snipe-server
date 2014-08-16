@@ -473,7 +473,7 @@ public class BrowserLauncher {
      * @param url The URL to open
      * @param optlaunch An optional launcher program, used if we can't get the real launcher.
      * @param forceOverride - Override the automatically detected browser and run optlaunch.
-     * @throws java.io.IOException If the web browser could not be located or does not run
+     * @throws IOException If the web browser could not be located or does not run
      */
     public static void openURL(String url, String optlaunch, boolean forceOverride) throws IOException {
         if (!loadedWithoutErrors) {

@@ -61,7 +61,7 @@ public class GZip {
    *
    * @param fp - The file to load from.
    *
-   * @throws java.io.IOException - If there are any errors reading from the file.
+   * @throws IOException - If there are any errors reading from the file.
    */
   public void load(File fp) throws IOException {
     FileInputStream fis = new FileInputStream(fp);

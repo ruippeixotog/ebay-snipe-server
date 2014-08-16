@@ -651,7 +651,7 @@ public class AuctionEntry extends AuctionCore implements Comparable<AuctionEntry
         break;
       case 1:  //  Get bid info
         Currency bidAmount = Currency.getCurrency(curElement.getProperty("CURRENCY"),
-                curElement.getProperty("PRICE"));
+                                          curElement.getProperty("PRICE"));
         setBid(bidAmount);
         setBidQuantity(Integer.parseInt(curElement.getProperty("QUANTITY")));
         if(curElement.getProperty("WHEN", null) != null) {
@@ -660,7 +660,7 @@ public class AuctionEntry extends AuctionCore implements Comparable<AuctionEntry
         break;
       case 2:  //  Get the snipe info together
         Currency snipeAmount = Currency.getCurrency(curElement.getProperty("CURRENCY"),
-                curElement.getProperty("PRICE"));
+                                            curElement.getProperty("PRICE"));
         prepareSnipe(snipeAmount, Integer.parseInt(curElement.getProperty("QUANTITY")));
         mSnipeAt = Long.parseLong(curElement.getProperty("SECONDSPRIOR"));
         break;
@@ -682,7 +682,7 @@ public class AuctionEntry extends AuctionCore implements Comparable<AuctionEntry
         break;
       case 8:
         Currency shipping = Currency.getCurrency(curElement.getProperty("CURRENCY"),
-                curElement.getProperty("PRICE"));
+                                         curElement.getProperty("PRICE"));
         setShipping(shipping);
         break;
       case 9:
@@ -1678,7 +1678,7 @@ public class AuctionEntry extends AuctionCore implements Comparable<AuctionEntry
 
   @SuppressWarnings({"unchecked"})
   public static List<AuctionEntry> findAllBy(String column, String value) {
-    return (List<AuctionEntry>) ActiveRecord.findAllBy(AuctionEntry.class, column, value);
+    return (List<AuctionEntry>)ActiveRecord.findAllBy(AuctionEntry.class, column, value);
   }
 
   public void setNumBids(int bidCount) {

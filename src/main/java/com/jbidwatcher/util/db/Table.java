@@ -50,7 +50,7 @@ public class Table
    *
    * @param tablename - The name of the table this auctionDB reference will be talking to.
    *
-   * @throws java.sql.SQLException - If there's something wrong with the SQL to create the database.
+   * @throws SQLException - If there's something wrong with the SQL to create the database.
    * @throws IllegalAccessException - If the database is not able to be accessed.
    * @throws InstantiationException - If we can't create the JDBC driver for the database.
    * @throws ClassNotFoundException - If we can't find the JDBC driver for the database at all.
@@ -487,7 +487,7 @@ public class Table
     String type = mColumnMap.get(key).getType();
     try {
       if (type.equals("DECIMAL")) {
-        if(val == null) ps.setNull(column, Types.DECIMAL);
+        if(val == null) ps.setNull(column, java.sql.Types.DECIMAL);
         else {
           if (val.length() == 0) {
             ps.setBigDecimal(column, null);
@@ -496,13 +496,13 @@ public class Table
           }
         }
       } else if (type.equals("VARCHAR")) {
-        if (val == null) ps.setNull(column, Types.VARCHAR);
+        if (val == null) ps.setNull(column, java.sql.Types.VARCHAR);
         else ps.setString(column, val.substring(0, Math.min(val.length(), 255)));
       } else if (type.equals("CHAR")) {
-        if (val == null) ps.setNull(column, Types.CHAR);
+        if (val == null) ps.setNull(column, java.sql.Types.CHAR);
         else ps.setString(column, val.substring(0, Math.min(val.length(), 255)));
       } else if (type.equals("TIMESTAMP") || type.equals("DATETIME")) {
-        if (val == null) ps.setNull(column, Types.TIMESTAMP);
+        if (val == null) ps.setNull(column, java.sql.Types.TIMESTAMP);
         else try {
           ps.setTimestamp(column, Timestamp.valueOf(val));
         } catch(SQLException e) {
@@ -513,21 +513,21 @@ public class Table
           throw e;
         }
       } else if (type.equals("INTEGER") || type.equals("INT")) {
-        if (val == null) ps.setNull(column, Types.INTEGER);
+        if (val == null) ps.setNull(column, java.sql.Types.INTEGER);
         else if(val.length()==0) {
           ps.setInt(column, -1);
         } else {
           ps.setInt(column, Integer.parseInt(val));
         }
       } else if (type.equals("SMALLINT")) {
-        if (val == null) ps.setNull(column, Types.SMALLINT);
+        if (val == null) ps.setNull(column, java.sql.Types.SMALLINT);
         else if(val.equals("Y")) ps.setShort(column, (short) 1);
         else if(val.equals("N")) ps.setShort(column, (short) 0);
         else {
           try {
             ps.setShort(column, Short.parseShort(val));
           } catch (NumberFormatException nfe) {
-            ps.setNull(column, Types.SMALLINT);
+            ps.setNull(column, java.sql.Types.SMALLINT);
           }
         }
       } else {

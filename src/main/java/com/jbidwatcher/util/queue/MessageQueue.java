@@ -13,7 +13,7 @@ import com.jbidwatcher.util.Currency;
 
 public abstract class MessageQueue implements Runnable {
   protected final LinkedList<Object> _queue = new LinkedList<Object>();
-  protected List<Listener> _listeners = new ArrayList<Listener>(1);
+  protected List<MessageQueue.Listener> _listeners = new ArrayList<Listener>(1);
   protected abstract void handleListener();
 
   public interface Listener {

@@ -117,7 +117,7 @@ public class Http implements HttpInterface {
     uc.setRequestProperty("Accept-Encoding", "gzip");
   }
 
-  public URLConnection makeRequest(URL source, String cookie) throws IOException {
+  public URLConnection makeRequest(URL source, String cookie) throws java.io.IOException {
     if(JConfig.queryConfiguration("debug.urls", "false").equals("true")) {
       JConfig.log().logDebug("makeRequest: " + source.toString());
     }
@@ -135,12 +135,12 @@ public class Http implements HttpInterface {
     return getURL(url, null);
   }
 
-  /**
+  /** 
    * @brief Retrieve data from HTTP in raw byte form.
-   *
+   * 
    * @param url - The URL of the raw data to retrieve.
    * @param inCookie - Any cookie needed to be passed along.
-   *
+   * 
    * @return - A result with raw data and the length.
    */
   private ByteBuffer getURL(URL url, String inCookie) {
@@ -189,7 +189,7 @@ public class Http implements HttpInterface {
    *
    * @param is - The InputStream to read from.
    * @return - A ByteBuffer containing the data read from the InputStream.
-   * @throws java.io.IOException - If any problems occur while reading.
+   * @throws IOException - If any problems occur while reading.
    */
   private ByteBuffer receiveStream(InputStream is) throws IOException {
     int curMax = 111821;  //  A prime; no good reason.

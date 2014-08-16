@@ -124,9 +124,9 @@ public class JBTool implements ToolInterface {
     ActiveRecord.disableDatabase();
     AuctionEntry.addObserver(EntryFactory.getInstance());
     AuctionEntry.addObserver(new Observer<AuctionEntry>() {
-        public void afterCreate(AuctionEntry o) {
-            EntryCorral.getInstance().putWeakly(o);
-        }
+      public void afterCreate(AuctionEntry o) {
+        EntryCorral.getInstance().putWeakly(o);
+      }
     });
     JBTool tool = new JBTool(args);
 
