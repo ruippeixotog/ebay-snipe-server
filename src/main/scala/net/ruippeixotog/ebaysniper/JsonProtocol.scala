@@ -66,6 +66,11 @@ object JsonProtocol {
         case _ => null
       }
 
+      val description = jObj.get("description") match {
+        case Some(JsString(desc)) => desc
+        case _ => ""
+      }
+
       val bid = jObj.get("bid") match {
         case Some(JsNumber(b)) => Currency.getCurrency(Currency.US_DOLLAR, b.toDouble)
         case Some(JsString(str)) => Currency.getCurrency(str)
@@ -83,11 +88,12 @@ object JsonProtocol {
         case _ => None
       }
 
-      SnipeInfo(auctionId, bid, quantity, snipeTime)
+      SnipeInfo(auctionId, description, bid, quantity, snipeTime)
     }
 
     override def write(info: SnipeInfo) = Map(
       "auctionId" -> info.auctionId.safeJson,
+      "description" -> info.description.safeJson,
       "bid" -> info.bid.safeJson,
       "quantity" -> info.quantity.safeJson,
       "snipeTime" -> info.snipeTime.orNull.safeJson

@@ -46,18 +46,19 @@ The server currently supports the following HTTP endpoints:
   * **POST /auction/{auctionId}/snipe**
 
   Submits information for a snipe to be scheduled for an auction. For scheduling a bid of 0.5 US dollars (the server's default currency), one can simply submit:
-  
+
   ```json
   {
       "bid": 0.5
   }
   ```
 
-  The request can also include the currency to use, a specific time for the snipe to take place and the quantity of items to bid for. If a time is not provided, the server will schedule the snipe for a time it sees fit. The default quantity of items to bid for is 1. The full snipe JSON would be:
+  The request can also include the currency to use, a description, a specific time for the snipe to take place and the quantity of items to bid for. If a time is not provided, the server will schedule the snipe for a time it sees fit. The default quantity of items to bid for is 1. The full snipe JSON would be:
 
   ```json
   {
       "bid": "USD 0.5",
+      "description": "cheap and awesome item",
       "quantity": 1,
       "snipeTime": "2014-08-05T02:29:06.690"
   }
