@@ -57,14 +57,17 @@ object Browser {
     def selectFromConfig(queryConf: Config): Any = {
       val q = select(queryConf.getString("query"))
 
-      val content =
-        if(queryConf.hasPath("attr")) q.attr(queryConf.getString("attr")) else q.text()
+      if(q.isEmpty) None
+      else Some {
+        val content =
+          if(queryConf.hasPath("attr")) q.attr(queryConf.getString("attr")) else q.text()
 
-      if(queryConf.hasPath("date-format"))
-        DateTimeFormat.forPattern(queryConf.getString("date-format")).parseDateTime(content)
-      else if(queryConf.hasPath("regex-format"))
-        queryConf.getString("regex-format").r.findFirstIn(content).get
-      else content
+        if(queryConf.hasPath("date-format"))
+          DateTimeFormat.forPattern(queryConf.getString("date-format")).parseDateTime(content)
+        else if(queryConf.hasPath("regex-format"))
+          queryConf.getString("regex-format").r.findFirstIn(content).get
+        else content
+      }
     }
   }
 

@@ -30,7 +30,7 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
 
     val strippedElems = auctionHtml.select("head, #LeftSummaryPanel, #RightSummaryPanel")
 
-    def query[T: ClassTag](attr: String) =
+    def query[T: ClassTag](attr: String): Option[T] =
       strippedElems.selectFromConfig(aiConfig.getConfig(attr)).asInstanceOf[Option[T]]
 
     val currentBid = Currency.getCurrency(query[String]("current-bid").get)
