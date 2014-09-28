@@ -8,7 +8,7 @@ case class Auction(id: String, title: String, endingAt: DateTime, seller: Seller
                    shippingCost: Currency, thumbnailUrl: String) {
 
   def ended = endingAt.isBeforeNow
-  def defaultCurrency = currentBid.getCurrencySymbol
+  def defaultCurrency = currentBid.fullCurrencyName
 }
 
 object Auction {
