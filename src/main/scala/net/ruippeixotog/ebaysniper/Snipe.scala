@@ -4,6 +4,7 @@ import java.util.{Date, Timer}
 
 import com.jbidwatcher.auction.server.ebay.ebayServer
 import com.jbidwatcher.util.Currency
+import net.ruippeixotog.ebaysniper.browser.BiddingClient
 import net.ruippeixotog.ebaysniper.util.Implicits._
 import net.ruippeixotog.ebaysniper.util.Logging
 
@@ -13,7 +14,7 @@ import scala.util.Try
 case class SnipeInfo(auctionId: String, description: String, bid: Currency,
                      quantity: Int, snipeTime: Option[Date])
 
-class Snipe(val info: SnipeInfo)(implicit ebay: ebayServer) extends Logging {
+class Snipe(val info: SnipeInfo)(implicit ebay: BiddingClient) extends Logging {
 
   private[this] var timer: Timer = null
   private[this] var promise: Promise[Int] = null

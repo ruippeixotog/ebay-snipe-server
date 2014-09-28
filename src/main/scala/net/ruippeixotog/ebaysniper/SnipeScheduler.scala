@@ -3,12 +3,12 @@ package net.ruippeixotog.ebaysniper
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
-import com.jbidwatcher.auction.server.ebay.ebayServer
 import com.typesafe.config.ConfigFactory
+import net.ruippeixotog.ebaysniper.browser.BiddingClient
 
 import scala.util.Random
 
-case class SnipeScheduler()(implicit ebay: ebayServer) {
+case class SnipeScheduler()(implicit ebay: BiddingClient) {
   val config = ConfigFactory.load.getConfig("ebay.sniper.scheduler")
 
   val meanMargin = config.getDuration("mean-margin", TimeUnit.MILLISECONDS)
@@ -16,7 +16,7 @@ case class SnipeScheduler()(implicit ebay: ebayServer) {
   val maxMargin = config.getDuration("max-margin", TimeUnit.MILLISECONDS)
 
   def snipeTimeFor(auctionId: String, hintTime: Option[Date] = None): Option[Date] = {
-    val endTime = ebay.create(auctionId).getEndDate.getTime
+    val endTime = ebay.auctionInfo(auctionId).endingAt.getMillis
 
     if(System.currentTimeMillis() > endTime) None
     else {

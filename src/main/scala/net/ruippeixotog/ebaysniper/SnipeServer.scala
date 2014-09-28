@@ -1,9 +1,9 @@
 package net.ruippeixotog.ebaysniper
 
 import akka.actor.ActorSystem
-import com.jbidwatcher.auction.server.ebay.ebayServer
 import com.typesafe.config.ConfigFactory
 import net.ruippeixotog.ebaysniper.JsonProtocol._
+import net.ruippeixotog.ebaysniper.browser.{JBidwatcherClient, BiddingClient}
 import net.ruippeixotog.ebaysniper.util.RoutingLogging
 import spray.http.StatusCodes.{Success => _, _}
 import spray.httpx.SprayJsonSupport._
@@ -26,8 +26,8 @@ object SnipeServer extends App with SimpleRoutingApp with RoutingLogging with Sn
   implicit def executionContext = system.dispatcher
 
   // create the eBay server interface
-  implicit val ebay = new ebayServer(site, username, password)
-  ebay.forceLogin()
+  implicit val ebay = new JBidwatcherClient(site, username, password)
+  ebay.login()
 
   override val snipesFile = Option(config.getString("sniper.snipes-file"))
   loadSnipesFromFile()
@@ -68,7 +68,7 @@ object SnipeServer extends App with SimpleRoutingApp with RoutingLogging with Sn
           }
         } ~
         pathEnd {
-          get { complete(ebay.create(auctionId)) }
+          get { complete(ebay.auctionInfo(auctionId)) }
         }
       } ~
       path("snipes") {
