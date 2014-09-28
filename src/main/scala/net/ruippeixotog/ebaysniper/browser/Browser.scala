@@ -1,8 +1,9 @@
 package net.ruippeixotog.ebaysniper.browser
 
 import com.github.nscala_time.time.Imports._
-import com.typesafe.config.Config
+import com.typesafe.config.{ConfigList, Config}
 import net.ruippeixotog.ebaysniper.util.Logging
+import org.joda.time.format.DateTimeFormatterBuilder
 import org.jsoup.Connection.Method._
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -11,6 +12,7 @@ import org.jsoup.{Connection, Jsoup}
 import scala.collection.convert.WrapAsJava._
 import scala.collection.convert.WrapAsScala._
 import scala.collection.mutable.{Map => MutableMap}
+import scala.util.{Success, Try}
 
 class Browser extends Logging {
   val cookies = MutableMap.empty[String, String]
@@ -62,8 +64,15 @@ object Browser {
         val content =
           if(queryConf.hasPath("attr")) q.attr(queryConf.getString("attr")) else q.text()
 
-        if(queryConf.hasPath("date-format"))
-          DateTimeFormat.forPattern(queryConf.getString("date-format")).parseDateTime(content)
+        if(queryConf.hasPath("date-format")) {
+          DateTimeFormat.forPattern(queryConf.getString("date-format"))
+        }
+        else if(queryConf.hasPath("date-formats")) {
+          val parsers = queryConf.getStringList("date-formats").map(
+            DateTimeFormat.forPattern(_).getParser).toArray
+
+          new DateTimeFormatterBuilder().append(null, parsers).toFormatter.parseDateTime(content)
+        }
         else if(queryConf.hasPath("regex-format"))
           queryConf.getString("regex-format").r.findFirstIn(content).get
         else content

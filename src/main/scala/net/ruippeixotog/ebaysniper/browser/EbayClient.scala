@@ -28,36 +28,38 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
     val auctionHtml = browser.get(auctionURL(auctionId))
     val aiConfig = siteConfig.getConfig("auction-info")
 
-    val strippedElems = auctionHtml.select("head, #LeftSummaryPanel, #RightSummaryPanel")
+    val strippedElems = auctionHtml.select("head, #LeftSummaryPanel, #RightSummaryPanel, " +
+        "#CenterPanelInternal")
 
     def query[T: ClassTag](attr: String): Option[T] =
       strippedElems.selectFromConfig(aiConfig.getConfig(attr)).asInstanceOf[Option[T]]
 
-    val currentBid = Currency.getCurrency(query[String]("current-bid").get)
+    val endingAt = query[DateTime]("ending-at").fold[DateTime](new DateTime(0))(
+      _.withZone(DateTimeZone.getDefault()))
+
+    val currentBid = query[String]("current-bid").fold[Currency](null)(Currency.getCurrency)
+    val buyNowPrice = query[String]("buy-now-price").fold[Currency](null)(Currency.getCurrency)
 
     val shippingCost = query[String]("shipping-cost") match {
-      case None | Some("FREE") => Currency.getCurrency(currentBid.getCurrencySymbol, 0.0)
-      case Some(price) => Currency.getCurrency(price)
-    }
-
-    val buyNowPrice = query[String]("buy-now-price") match {
       case None => null
+      case Some("FREE") if currentBid == null => null
+      case Some("FREE") => Currency.getCurrency(currentBid.getCurrencySymbol, 0.0)
       case Some(price) => Currency.getCurrency(price)
     }
 
     Auction(auctionId,
-      title = query[String]("title").get,
-      endingAt = query[DateTime]("ending-at").get.withZone(DateTimeZone.getDefault()),
+      title = query[String]("title").getOrElse(""),
+      endingAt = endingAt,
       seller = Seller(
-        id = query[String]("seller.id").get,
+        id = query[String]("seller.id").orNull,
         feedback = query[String]("seller.feedback").fold(0)(_.toInt),
         positivePercentage = query[String]("seller.positive-percentage").fold(100.0)(_.toDouble)),
       currentBid = currentBid,
-      bidCount = query[String]("bid-count").get.toInt,
+      bidCount = query[String]("bid-count").fold(0)(_.toInt),
       buyNowPrice = buyNowPrice,
-      location = query[String]("location").get,
+      location = query[String]("location").orNull,
       shippingCost = shippingCost,
-      thumbnailUrl = query[String]("thumbnail-url").get)
+      thumbnailUrl = query[String]("thumbnail-url").orNull)
   }
 
   def bid(auctionId: String, bid: Currency, quantity: Int) = ???
