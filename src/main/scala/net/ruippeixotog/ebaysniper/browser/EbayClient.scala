@@ -7,11 +7,10 @@ import net.ruippeixotog.ebaysniper.Snipe
 import net.ruippeixotog.ebaysniper.browser.Browser._
 import net.ruippeixotog.ebaysniper.model.{Auction, Seller}
 import net.ruippeixotog.ebaysniper.util.Logging
-
-import scala.reflect.ClassTag
-import scala.util.{Success, Try}
+import org.jsoup.nodes.Document
 
 import scala.collection.convert.WrapAsScala._
+import scala.reflect.ClassTag
 
 class EbayClient(site: String, username: String, password: String) extends BiddingClient with Logging {
   implicit val browser = new Browser
@@ -24,13 +23,11 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
 
   def login() = loginMgr.forceLogin()
 
-  def auctionURL(auctionId: String) =
-    siteConfig.getString("protocol") + siteConfig.getString("view-host") +
-        siteConfig.getString("file") + '?' + siteConfig.getString("auction-info.uri-cmd") +
-        siteConfig.getString("auction-info.uri-cgi") + auctionId
+  def auctionInfoURL(auctionId: String) =
+    replaceVars(siteConfig.getString("auction-info.uri-template"), Map("auctionId" -> auctionId))
 
   def auctionInfo(auctionId: String): Auction = {
-    val auctionHtml = browser.get(auctionURL(auctionId))
+    val auctionHtml = browser.get(auctionInfoURL(auctionId))
 
     val aiConfig = siteConfig.getConfig("auction-info")
     val attrsConfig = aiConfig.getConfig("attributes")
@@ -67,10 +64,9 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
       thumbnailUrl = query[String]("thumbnail-url").orNull)
   }
 
-  def bidFormURL(auctionId: String, bid: Currency) = {
+  def bidFormURL(auctionId: String, bid: Currency) =
     replaceVars(siteConfig.getString("bid-info.uri-template"),
       Map("auctionId" -> auctionId, "bidValue" -> bid.getValue.toString))
-  }
 
   def bid(auctionId: String, bid: Currency, quantity: Int): Int = {
     loginMgr.login()
@@ -79,30 +75,9 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
     val bidFormHtml = browser.get(bidFormURL(auctionId, bid))
     val bidForm = bidFormHtml.getElementById("reviewbid")
 
-    if(bidForm != null && bidForm.select("input[name=confirmbid][type=submit]").nonEmpty) {
-      val bidFormData = bidForm.extractFormData
-      val confirmHtml = browser.post(bidForm.attr("action"), bidFormData)
-
-      if(confirmHtml.egrep(siteConfig.getString("bid-confirm.success-message")).nonEmpty) {
-        log.debug("Successful bid on item {}", auctionId)
-        4
-      }
-      else {
-        siteConfig.getConfigList("bid-confirm.error-statuses").toStream.flatMap { errorDef =>
-          confirmHtml.selectFromConfig(errorDef.getConfig("select")).asInstanceOf[Option[String]].flatMap { content =>
-            errorDef.getString("match").r.findFirstIn(content).map { _ =>
-              val status = errorDef.getInt("status")
-              log.warn("Bid on item {} not successful: {} (#{})",
-                auctionId, Snipe.statusMessage(status), status.toString)
-              status
-            }
-          }
-        }.headOption.getOrElse(-1)
-      }
-
-    } else {
-      siteConfig.getConfigList("bid-info.error-statuses").toStream.flatMap { errorDef =>
-        bidFormHtml.selectFromConfig(errorDef.getConfig("select")).asInstanceOf[Option[String]].flatMap { content =>
+    def errorStatusCodeFor(doc: Document, errorDefsPath: String): Int =
+      siteConfig.getConfigList(errorDefsPath).toStream.flatMap { errorDef =>
+        doc.selectFromConfig(errorDef.getConfig("select")).asInstanceOf[Option[String]].flatMap { content =>
           errorDef.getString("match").r.findFirstIn(content).map { _ =>
             val status = errorDef.getInt("status")
             log.warn("Bid on item {} not successful: {} (#{})",
@@ -111,6 +86,20 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
           }
         }
       }.headOption.getOrElse(-1)
+
+    if(bidForm == null || bidForm.select("input[name=confirmbid][type=submit]").isEmpty) {
+      errorStatusCodeFor(bidFormHtml, "bid-info.error-statuses")
+    } else {
+      val bidFormData = bidForm.extractFormData
+      val confirmHtml = browser.post(bidForm.attr("action"), bidFormData)
+
+      if(confirmHtml.egrep(siteConfig.getString("bid-confirm.success-message")).isEmpty) {
+        errorStatusCodeFor(confirmHtml, "bid-confirm.error-statuses")
+      }
+      else {
+        log.debug("Successful bid on item {}", auctionId)
+        4
+      }
     }
   }
 

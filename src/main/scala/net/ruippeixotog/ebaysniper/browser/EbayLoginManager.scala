@@ -21,7 +21,7 @@ class EbayLoginManager(siteConf: Config, username: String, password: String)(
     browser.cookies.clear()
     log.debug("Getting the sign in cookie for {}", siteConf.getString("name"))
 
-    val signInHtml = browser.get(loginConf.getString("sign-in-page"))
+    val signInHtml = browser.get(loginConf.getString("uri"))
     val signInForm = signInHtml.select("form").filter(_.select("input[name=pass]").nonEmpty).head
 
     val signInData = signInForm.extractFormData + ("userid" -> username) + ("pass" -> password)
