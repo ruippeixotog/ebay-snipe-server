@@ -1,11 +1,14 @@
 package net.ruippeixotog.ebaysniper.browser
 
+import java.io.PrintStream
+
 import com.github.nscala_time.time.Imports._
 import com.jbidwatcher.util.Currency
 import com.typesafe.config.ConfigFactory
 import net.ruippeixotog.ebaysniper.Snipe
 import net.ruippeixotog.ebaysniper.browser.Browser._
 import net.ruippeixotog.ebaysniper.model.{Auction, Seller}
+import net.ruippeixotog.ebaysniper.util.Implicits._
 import net.ruippeixotog.ebaysniper.util.Logging
 import org.jsoup.nodes.Document
 
@@ -65,14 +68,14 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
   }
 
   def bidFormURL(auctionId: String, bid: Currency) =
-    replaceVars(siteConfig.getString("bid-info.uri-template"),
+    replaceVars(siteConfig.getString("bid-form.uri-template"),
       Map("auctionId" -> auctionId, "bidValue" -> bid.getValue.toString))
 
   def bid(auctionId: String, bid: Currency, quantity: Int): Int = {
     loginMgr.login()
     log.debug("Bidding {} on item {}", bid, auctionId, null)
 
-    def errorStatusCodeFor(doc: Document, errorDefsPath: String): Int =
+    def errorStatusCodeFor(doc: Document, errorDefsPath: String, desc: String): Int =
       siteConfig.getConfigList(errorDefsPath).toStream.flatMap { errorDef =>
         doc.selectFromConfig(errorDef.getConfig("select")).asInstanceOf[Option[String]].flatMap { content =>
           errorDef.getString("match").r.findFirstIn(content).map { _ =>
@@ -85,6 +88,7 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
       }.headOption.getOrElse {
         log.error("Bid on item {} not successful: {} (code -1)",
           auctionId, Snipe.statusMessage(-1), null)
+        dumpErrorPage(s"$desc-$auctionId-${System.currentTimeMillis()}.html", doc.outerHtml)
         -1
       }
 
@@ -92,7 +96,7 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
       val bidForm = bidFormHtml.getElementById("reviewbid")
 
       if(bidForm == null || bidForm.select("input[name=confirmbid][type=submit]").isEmpty)
-        errorStatusCodeFor(bidFormHtml, "bid-info.error-statuses")
+        errorStatusCodeFor(bidFormHtml, "bid-form.error-statuses", "bid-form")
       else {
         val bidFormData = bidForm.extractFormData
         val bidConfirmHtml = browser.post(bidForm.attr("action"), bidFormData)
@@ -102,7 +106,7 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
 
     def processBidConfirmHtml(bidConfirmHtml: Document): Int = {
       if(bidConfirmHtml.egrep(siteConfig.getString("bid-confirm.success-message")).isEmpty) {
-        errorStatusCodeFor(bidConfirmHtml, "bid-confirm.error-statuses")
+        errorStatusCodeFor(bidConfirmHtml, "bid-confirm.error-statuses", "bid-confirm")
       }
       else {
         log.debug("Successful bid on item {}", auctionId)
@@ -122,4 +126,13 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
       curr.replace(key, resolveKey(key.substring(1, key.length - 1), map))
     }
   }
+
+  private[this] val pageDumpingEnabled =
+    ConfigFactory.load.getBoolean("ebay.debug.dump-unexpected-error-pages")
+
+  private[this] lazy val dumpedPagesDir =
+    ConfigFactory.load.getString("ebay.debug.dumped-pages-dir")
+
+  private[this] def dumpErrorPage(filename: String, content: => String) =
+    if(pageDumpingEnabled) new PrintStream(s"$dumpedPagesDir/$filename").use(_.println(content))
 }
