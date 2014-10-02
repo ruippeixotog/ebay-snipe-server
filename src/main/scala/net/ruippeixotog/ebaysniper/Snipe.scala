@@ -2,9 +2,8 @@ package net.ruippeixotog.ebaysniper
 
 import java.util.{Date, Timer}
 
-import com.jbidwatcher.auction.server.ebay.ebayServer
-import com.jbidwatcher.util.Currency
 import net.ruippeixotog.ebaysniper.browser.BiddingClient
+import net.ruippeixotog.ebaysniper.model.Currency
 import net.ruippeixotog.ebaysniper.util.Implicits._
 import net.ruippeixotog.ebaysniper.util.Logging
 

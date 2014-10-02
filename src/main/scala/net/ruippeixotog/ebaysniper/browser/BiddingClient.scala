@@ -1,7 +1,6 @@
 package net.ruippeixotog.ebaysniper.browser
 
-import com.jbidwatcher.util.Currency
-import net.ruippeixotog.ebaysniper.model.Auction
+import net.ruippeixotog.ebaysniper.model._
 
 trait BiddingClient {
   def login(): Unit

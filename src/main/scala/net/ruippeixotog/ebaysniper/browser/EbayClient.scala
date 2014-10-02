@@ -3,11 +3,10 @@ package net.ruippeixotog.ebaysniper.browser
 import java.io.PrintStream
 
 import com.github.nscala_time.time.Imports._
-import com.jbidwatcher.util.Currency
 import com.typesafe.config.ConfigFactory
 import net.ruippeixotog.ebaysniper.Snipe
 import net.ruippeixotog.ebaysniper.browser.Browser._
-import net.ruippeixotog.ebaysniper.model.{Auction, Seller}
+import net.ruippeixotog.ebaysniper.model._
 import net.ruippeixotog.ebaysniper.util.Implicits._
 import net.ruippeixotog.ebaysniper.util.Logging
 import org.jsoup.nodes.Document
@@ -42,14 +41,14 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
     val endingAt = query[DateTime]("ending-at").fold[DateTime](new DateTime(0))(
       _.withZone(DateTimeZone.getDefault()))
 
-    val currentBid = query[String]("current-bid").fold[Currency](null)(Currency.getCurrency)
-    val buyNowPrice = query[String]("buy-now-price").fold[Currency](null)(Currency.getCurrency)
+    val currentBid = query[String]("current-bid").fold[Currency](null)(Currency.parse)
+    val buyNowPrice = query[String]("buy-now-price").fold[Currency](null)(Currency.parse)
 
     val shippingCost = query[String]("shipping-cost") match {
       case None => null
       case Some("FREE") if currentBid == null => null
-      case Some("FREE") => Currency.getCurrency(currentBid.getCurrencySymbol, 0.0)
-      case Some(price) => Currency.getCurrency(price)
+      case Some("FREE") => Currency(currentBid.symbol, 0.0)
+      case Some(price) => Currency.parse(price)
     }
 
     Auction(auctionId,
@@ -69,7 +68,7 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
 
   def bidFormURL(auctionId: String, bid: Currency) =
     replaceVars(siteConfig.getString("bid-form.uri-template"),
-      Map("auctionId" -> auctionId, "bidValue" -> bid.getValue.toString))
+      Map("auctionId" -> auctionId, "bidValue" -> bid.value.toString))
 
   def bid(auctionId: String, bid: Currency, quantity: Int): Int = {
     loginMgr.login()

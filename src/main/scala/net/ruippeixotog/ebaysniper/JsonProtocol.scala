@@ -3,8 +3,7 @@ package net.ruippeixotog.ebaysniper
 import java.util.{Date => JDate}
 
 import com.github.nscala_time.time.Imports._
-import com.jbidwatcher.util.Currency
-import net.ruippeixotog.ebaysniper.model.{Seller, Auction}
+import net.ruippeixotog.ebaysniper.model._
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
@@ -28,8 +27,7 @@ object JsonProtocol {
   }
 
   implicit object CurrencyJsonProtocol extends JsonWriter[Currency] {
-    def write(cur: Currency) = if(cur.getCurrencyType == Currency.NONE) JsNull
-      else JsString(cur.fullCurrencyName + " " + cur.getValueString)
+    def write(cur: Currency) = JsString(cur.symbol + " " + cur.value)
   }
 
   implicit object SellerJsonProtocol extends RootJsonWriter[Seller] {
@@ -73,8 +71,8 @@ object JsonProtocol {
       }
 
       val bid = jObj.get("bid") match {
-        case Some(JsNumber(b)) => Currency.getCurrency(Currency.US_DOLLAR, b.toDouble)
-        case Some(JsString(str)) => Currency.getCurrency(str)
+        case Some(JsNumber(b)) => Currency("USD", b.toDouble)
+        case Some(JsString(str)) => Currency.parse(str)
         case _ => throw new DeserializationException("A valid bid must be provided")
       }
 
