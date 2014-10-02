@@ -19,7 +19,7 @@ class EbayLoginManager(siteConf: Config, username: String, password: String)(
 
   def forceLogin(): Boolean = {
     browser.cookies.clear()
-    log.info("Getting the sign in cookie for {}", siteConf.getString("name"))
+    log.debug("Getting the sign in cookie for {}", siteConf.getString("name"))
 
     val signInHtml = browser.get(loginConf.getString("sign-in-page"))
     val signInForm = signInHtml.select("form").filter(_.select("input[name=pass]").nonEmpty).head
@@ -42,11 +42,11 @@ class EbayLoginManager(siteConf: Config, username: String, password: String)(
 
   private[this] def validLogin(doc: Document): Boolean = {
     if(doc.baseUri.contains("FYPShow") || doc.title == "Reset your password") {
-      log.error("eBay is requesting that you change your password. You must change your password on eBay.")
+      log.error("eBay is requesting that you change your password. You must change your password on eBay")
       false
     }
     else if (doc.egrep(loginConf.getString("verification-needed")).nonEmpty) {
-      log.error("eBay's security monitoring has been triggered, and temporarily requires human " +
+      log.error("eBay's security monitoring has been triggered and temporarily requires human " +
           "intervention to log in")
       false
     }
