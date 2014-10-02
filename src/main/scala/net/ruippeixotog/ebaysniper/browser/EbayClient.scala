@@ -72,35 +72,46 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
     loginMgr.login()
     log.debug("Bidding {} on item {}", bid, auctionId, null)
 
-    val bidFormHtml = browser.get(bidFormURL(auctionId, bid))
-    val bidForm = bidFormHtml.getElementById("reviewbid")
-
     def errorStatusCodeFor(doc: Document, errorDefsPath: String): Int =
       siteConfig.getConfigList(errorDefsPath).toStream.flatMap { errorDef =>
         doc.selectFromConfig(errorDef.getConfig("select")).asInstanceOf[Option[String]].flatMap { content =>
           errorDef.getString("match").r.findFirstIn(content).map { _ =>
             val status = errorDef.getInt("status")
-            log.warn("Bid on item {} not successful: {} (#{})",
+            log.warn("Bid on item {} not successful: {} (code {})",
               auctionId, Snipe.statusMessage(status), status.toString)
             status
           }
         }
-      }.headOption.getOrElse(-1)
+      }.headOption.getOrElse {
+        log.error("Bid on item {} not successful: {} (code -1)",
+          auctionId, Snipe.statusMessage(-1), null)
+        -1
+      }
 
-    if(bidForm == null || bidForm.select("input[name=confirmbid][type=submit]").isEmpty) {
-      errorStatusCodeFor(bidFormHtml, "bid-info.error-statuses")
-    } else {
-      val bidFormData = bidForm.extractFormData
-      val confirmHtml = browser.post(bidForm.attr("action"), bidFormData)
+    def processBidFormHtml(bidFormHtml: Document): Int = {
+      val bidForm = bidFormHtml.getElementById("reviewbid")
 
-      if(confirmHtml.egrep(siteConfig.getString("bid-confirm.success-message")).isEmpty) {
-        errorStatusCodeFor(confirmHtml, "bid-confirm.error-statuses")
+      if(bidForm == null || bidForm.select("input[name=confirmbid][type=submit]").isEmpty)
+        errorStatusCodeFor(bidFormHtml, "bid-info.error-statuses")
+      else {
+        val bidFormData = bidForm.extractFormData
+        val bidConfirmHtml = browser.post(bidForm.attr("action"), bidFormData)
+        processBidConfirmHtml(bidConfirmHtml)
+      }
+    }
+
+    def processBidConfirmHtml(bidConfirmHtml: Document): Int = {
+      if(bidConfirmHtml.egrep(siteConfig.getString("bid-confirm.success-message")).isEmpty) {
+        errorStatusCodeFor(bidConfirmHtml, "bid-confirm.error-statuses")
       }
       else {
         log.debug("Successful bid on item {}", auctionId)
         4
       }
     }
+
+    val bidFormHtml = browser.get(bidFormURL(auctionId, bid))
+    processBidFormHtml(bidFormHtml)
   }
 
   private[this] def resolveKey(key: String, map: Map[String, String]) =

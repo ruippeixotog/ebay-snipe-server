@@ -60,7 +60,7 @@ object Snipe {
     BID_ERROR_BANNED -> "The user is disallowed from bidding on this seller's items",
     BID_ERROR_RESERVE_NOT_MET -> "Bid successful but below the reserve price",
     BID_ERROR_CONNECTION -> "Connection problem, probably a timeout trying to reach eBay",
-    BID_ERROR_TOO_LOW_SELF -> "Bid below or equal to the user's previous high bid",
+    BID_ERROR_TOO_LOW_SELF -> "Bid below or equal to own previous high bid",
     BID_ERROR_AUCTION_GONE -> "The item was removed from JBidwatcher before the bid executed", // should not happen
     BID_ERROR_ACCOUNT_SUSPENDED -> "User's account has been suspended",
     BID_ERROR_CANT_SIGN_IN -> "Sign in failed repeatedly during bid",
