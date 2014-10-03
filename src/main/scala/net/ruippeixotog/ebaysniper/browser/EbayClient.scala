@@ -4,7 +4,6 @@ import java.io.PrintStream
 
 import com.github.nscala_time.time.Imports._
 import com.typesafe.config.ConfigFactory
-import net.ruippeixotog.ebaysniper.Snipe
 import net.ruippeixotog.ebaysniper.browser.Browser._
 import net.ruippeixotog.ebaysniper.model._
 import net.ruippeixotog.ebaysniper.util.Implicits._
@@ -80,13 +79,13 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
           errorDef.getString("match").r.findFirstIn(content).map { _ =>
             val status = errorDef.getInt("status")
             log.warn("Bid on item {} not successful: {} (code {})",
-              auctionId, Snipe.statusMessage(status), status.toString)
+              auctionId, BiddingClient.statusMessage(status), status.toString)
             status
           }
         }
       }.headOption.getOrElse {
         log.error("Bid on item {} not successful: {} (code -1)",
-          auctionId, Snipe.statusMessage(-1), null)
+          auctionId, BiddingClient.statusMessage(-1), null)
         dumpErrorPage(s"$desc-$auctionId-${System.currentTimeMillis()}.html", doc.outerHtml)
         -1
       }
