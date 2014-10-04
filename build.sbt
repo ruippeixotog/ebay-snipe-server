@@ -7,18 +7,18 @@ organization := "net.ruippeixotog"
 
 version := "0.1"
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.2"
 
 resolvers += "Spray repository" at "http://repo.spray.io"
 
 libraryDependencies ++= Seq(
   "ch.qos.logback"              % "logback-classic" % "1.1.2",
-  "com.github.nscala-time"     %% "nscala-time"     % "1.2.0",
+  "com.github.nscala-time"     %% "nscala-time"     % "1.4.0",
   "com.typesafe"                % "config"          % "1.2.1",
-  "com.typesafe.akka"          %% "akka-actor"      % "2.3.2",
-  "com.typesafe.akka"          %% "akka-slf4j"      % "2.3.2",
+  "com.typesafe.akka"          %% "akka-actor"      % "2.3.6",
+  "com.typesafe.akka"          %% "akka-slf4j"      % "2.3.6",
   "io.spray"                   %% "spray-can"       % "1.3.1",
-  "io.spray"                   %% "spray-json"      % "1.2.6",
+  "io.spray"                   %% "spray-json"      % "1.3.0",
   "io.spray"                   %% "spray-routing"   % "1.3.1",
   "org.jsoup"                   % "jsoup"           % "1.8.1")
 
