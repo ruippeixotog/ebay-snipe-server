@@ -5,9 +5,6 @@ case class Currency(symbol: String, value: Double) {
 }
 
 object Currency {
- def apply(a: com.jbidwatcher.util.Currency): Currency = Currency(
-   symbol = a.fullCurrencyName,
-   value = a.getValue)
 
  def parse(str: String) = {
    val symbol = (str.length to 1 by -1).toStream.flatMap { len =>
