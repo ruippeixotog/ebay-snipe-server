@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 import java.io.FileNotFoundException;
 
 /** @noinspection OverriddenMethodCallInConstructor*/
-public final class ebayServer extends AuctionServer implements MessageQueue.Listener,JConfig.ConfigListener {
+public final class ebayServer extends AuctionServer implements MessageQueue.Listener, com.cyberfox.util.config.JConfig.ConfigListener {
   private final static ebayCurrencyTables sCurrencies = new ebayCurrencyTables();
   private TT T;
 

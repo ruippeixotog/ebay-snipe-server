@@ -25,6 +25,8 @@ object SnipeServer extends App with SimpleRoutingApp with RoutingLogging with Sn
 
   // create the eBay server interface
   implicit val ebay = new EbayClient(site, username, password)
+
+  log.info("Logging in into eBay")
   ebay.login()
 
   override val snipesFile = Option(config.getString("sniper.snipes-file"))

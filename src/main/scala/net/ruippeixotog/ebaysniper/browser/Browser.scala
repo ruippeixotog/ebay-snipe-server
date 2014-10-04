@@ -1,7 +1,7 @@
 package net.ruippeixotog.ebaysniper.browser
 
 import com.github.nscala_time.time.Imports._
-import com.typesafe.config.{ConfigList, Config}
+import com.typesafe.config.Config
 import net.ruippeixotog.ebaysniper.util.Logging
 import org.joda.time.format.DateTimeFormatterBuilder
 import org.jsoup.Connection.Method._
@@ -12,7 +12,6 @@ import org.jsoup.{Connection, Jsoup}
 import scala.collection.convert.WrapAsJava._
 import scala.collection.convert.WrapAsScala._
 import scala.collection.mutable.{Map => MutableMap}
-import scala.util.{Success, Try}
 
 class Browser extends Logging {
   val cookies = MutableMap.empty[String, String]
