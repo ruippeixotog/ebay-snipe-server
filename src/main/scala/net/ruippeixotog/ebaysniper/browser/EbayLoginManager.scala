@@ -1,58 +1,51 @@
 package net.ruippeixotog.ebaysniper.browser
 
 import com.typesafe.config.Config
-import net.ruippeixotog.ebaysniper.browser.Browser._
+import net.ruippeixotog.ebaysniper.util.Implicits._
 import net.ruippeixotog.ebaysniper.util.Logging
-import org.jsoup.nodes.Document
-
-import scala.collection.convert.WrapAsScala._
+import net.ruippeixotog.scalascraper.browser.Browser
+import net.ruippeixotog.scalascraper.dsl.DSL._
+import net.ruippeixotog.scalascraper.scraper.{ContentExtractors => Extract}
+import net.ruippeixotog.scalascraper.util.Validated.{VFailure, VSuccess}
 
 class EbayLoginManager(siteConf: Config, username: String, password: String)(
     implicit browser: Browser) extends Logging {
-  
-  val loginConf = siteConf.getConfig("login")
+
+  implicit private[this] def defaultConf = siteConf
 
   def login(): Boolean = {
     if(browser.cookies.contains("shs")) true
     else forceLogin()
   }
 
+  def loginUrl = siteConf.getString("login-form.uri-template").resolveVars()
+
   def forceLogin(): Boolean = {
     browser.cookies.clear()
     log.debug("Getting the sign in cookie for {}", siteConf.getString("name"))
 
-    val signInHtml = browser.get(loginConf.getString("uri"))
-    val signInForm = signInHtml.select("form").filter(_.select("input[name=pass]").nonEmpty).head
+    val (formData, signInAction) = browser.get(loginUrl) >> signInFormExtractor
+    val signInData = formData + ("userid" -> username) + ("pass" -> password)
 
-    val signInData = signInForm.extractFormData + ("userid" -> username) + ("pass" -> password)
-    val confirmHtml = browser.post(signInForm.attr("action"), signInData)
+    browser.post(signInAction, signInData) ~/~ loginErrors match {
+      case VFailure(status) =>
+        log.error("A problem occurred while signing in ({})", status)
+        false
 
-    val isSuccess = validLogin(confirmHtml)
-    if (isSuccess) {
-      val hidUrl = confirmHtml.select("form input[name=hidUrl]")(0).attr("value")
-
-      if (!hidUrl.matches(loginConf.getString("valid-success-uri")))
-        log.warn("Security checks out, but no My eBay form link on final page")
-
-      log.info("Login successful")
+      case VSuccess(doc) =>
+        doc ~/~ loginWarnings match {
+          case VFailure(status) =>
+            log.warn("A warning occurred while signing in ({})", status)
+          case _ =>
+        }
+        log.info("Login successful")
+        true
     }
-
-    isSuccess
   }
 
-  private[this] def validLogin(doc: Document): Boolean = {
-    if(doc.baseUri.contains("FYPShow") || doc.title == "Reset your password") {
-      log.error("eBay is requesting that you change your password. You must change your password on eBay")
-      false
-    }
-    else if (doc.egrep(loginConf.getString("verification-needed")).nonEmpty) {
-      log.error("eBay's security monitoring has been triggered and temporarily requires human " +
-          "intervention to log in")
-      false
-    }
-    else if (doc.egrep(loginConf.getString("invalid-credentials")).nonEmpty) {
-      log.error("Your sign in information is not correct")
-      false
-    } else true
-  }
+  private[this] lazy val signInFormExtractor =
+    Extract.formDataAndAction(siteConf.getString("login-form.form-query"))
+
+  private[this] lazy val loginErrors = matchersAt[String](siteConf, "login-confirm.error-statuses")
+  private[this] lazy val loginWarnings = matchersAt[String](siteConf, "login-confirm.warn-statuses")
 }
