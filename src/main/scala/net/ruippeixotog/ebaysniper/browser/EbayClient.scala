@@ -4,6 +4,7 @@ import java.io.PrintStream
 
 import com.github.nscala_time.time.Imports._
 import com.typesafe.config.ConfigFactory
+import net.ruippeixotog.ebaysniper.browser.BiddingClient.BidStatus
 import net.ruippeixotog.ebaysniper.model._
 import net.ruippeixotog.ebaysniper.util.Implicits._
 import net.ruippeixotog.ebaysniper.util.Logging
@@ -72,28 +73,27 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
     siteConf.getString("bid-form.uri-template").resolveVars(
       Map("auctionId" -> auctionId, "bidValue" -> bid.value.toString))
 
-  def bid(auctionId: String, bid: Currency, quantity: Int): Int = {
+  def bid(auctionId: String, bid: Currency, quantity: Int): String = {
     loginMgr.login()
     log.debug("Bidding {} on item {}", bid, auctionId, null)
 
-    def validate(doc: Document, succPath: String, errorsPath: String, desc: String): Option[Int] = {
-      val succ = matcherAt[Int](siteConf, succPath)
-      val errors = matchersAt[Int](siteConf, errorsPath)
+    def validate(doc: Document, succPath: String, errorsPath: String, desc: String): Option[String] = {
+      val succ = matcherAt[String](siteConf, succPath)
+      val errors = matchersAt[String](siteConf, errorsPath)
 
-      doc ~/~ (succ, errors, -1) match {
+      doc ~/~ (succ, errors, "unknown") match {
         case VSuccess(_) => None
 
         case VFailure(status) =>
-          log.warn("Bid on item {} not successful: {} (code {})",
-            auctionId, BiddingClient.statusMessage(status), status.toString)
+          log.warn("Bid on item {} not successful: {}", auctionId, status, null)
 
-          if(status == -1)
+          if(status == "unknown")
             dumpErrorPage(s"$desc-$auctionId-${System.currentTimeMillis()}.html", doc.outerHtml)
           Some(status)
       }
     }
 
-    def processBidFormHtml(bidFormHtml: Document): Int = {
+    def processBidFormHtml(bidFormHtml: Document): String = {
       val formExtractor = Extract.formDataAndAction(siteConf.getString("bid-form.form-query"))
 
       validate(bidFormHtml, "bid-form.success-status", "bid-form.error-statuses", "bid-form") match {
@@ -105,12 +105,12 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
       }
     }
 
-    def processBidConfirmHtml(bidConfirmHtml: Document): Int = {
+    def processBidConfirmHtml(bidConfirmHtml: Document): String = {
       validate(bidConfirmHtml, "bid-confirm.success-status", "bid-confirm.error-statuses", "bid-form") match {
         case Some(status) => status
         case None =>
           log.debug("Successful bid on item {}", auctionId)
-          4
+          "winning"
       }
     }
 

@@ -16,12 +16,12 @@ case class SnipeInfo(auctionId: String, description: String, bid: Currency,
 class Snipe(val info: SnipeInfo)(implicit ebay: BiddingClient) extends Logging {
 
   private[this] var timer: Timer = null
-  private[this] var promise: Promise[Int] = null
+  private[this] var promise: Promise[String] = null
 
-  def activate(): Future[Int] = {
+  def activate(): Future[String] = {
     if(promise != null) promise.future
     else {
-      promise = Promise[Int]()
+      promise = Promise[String]()
       timer = new Timer(s"${info.auctionId}-snipe", true)
 
       timer.schedule(promise.complete(Try {
