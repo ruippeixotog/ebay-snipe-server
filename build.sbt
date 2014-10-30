@@ -25,6 +25,12 @@ libraryDependencies ++= Seq(
   "net.ruippeixotog"           %% "scala-scraper"   % "0.1-SNAPSHOT",
   "org.jsoup"                   % "jsoup"           % "1.8.1")
 
+scalacOptions ++= Seq(
+  "-deprecation",
+  "-unchecked",
+  "-feature",
+  "-language:implicitConversions")
+
 packageArchetype.java_server
 
 mainClass in Compile := Some("net.ruippeixotog.ebaysniper.SnipeServer")
