@@ -4,46 +4,49 @@ import java.io.PrintStream
 
 import com.github.nscala_time.time.Imports._
 import com.typesafe.config.ConfigFactory
-import net.ruippeixotog.ebaysniper.browser.Browser._
 import net.ruippeixotog.ebaysniper.model._
 import net.ruippeixotog.ebaysniper.util.Implicits._
 import net.ruippeixotog.ebaysniper.util.Logging
+import net.ruippeixotog.scalascraper.browser.Browser
+import net.ruippeixotog.scalascraper.dsl.DSL._
+import net.ruippeixotog.scalascraper.util.Validated._
 import org.jsoup.nodes.Document
 
-import scala.collection.convert.WrapAsScala._
 import scala.reflect.ClassTag
 
 class EbayClient(site: String, username: String, password: String) extends BiddingClient with Logging {
   implicit val browser = new Browser
 
-  val siteConfig =
+  implicit val siteConf =
     ConfigFactory.load.getConfig(s"ebay.sites-config.${site.replace('.', '-')}").
       withFallback(ConfigFactory.parseString(s"name = $site"))
 
-  val loginMgr = new EbayLoginManager(siteConfig, username, password)
+  val loginMgr = new EbayLoginManager(siteConf, username, password)
 
   def login() = loginMgr.forceLogin()
 
-  def auctionInfoURL(auctionId: String) =
-    replaceVars(siteConfig.getString("auction-info.uri-template"), Map("auctionId" -> auctionId))
+  def auctionInfoUrl(auctionId: String) =
+    siteConf.getString("auction-info.uri-template").resolveVars(Map("auctionId" -> auctionId))
 
   def auctionInfo(auctionId: String): Auction = {
-    val auctionHtml = browser.get(auctionInfoURL(auctionId))
+    val attrsConfig = siteConf.getConfig("auction-info.attributes")
+    val contentExtractor = Extract.elements(siteConf.getString("auction-info.content-query"))
 
-    val aiConfig = siteConfig.getConfig("auction-info")
-    val attrsConfig = aiConfig.getConfig("attributes")
-    val contentElems = auctionHtml.select(aiConfig.getString("content-query"))
+    val contentHtml = browser.get(auctionInfoUrl(auctionId)) >> contentExtractor
 
-    def query[T: ClassTag](attr: String): Option[T] =
-      contentElems.selectFromConfig(attrsConfig.getConfig(attr)).asInstanceOf[Option[T]]
+    def query(attr: String): Option[String] =
+      contentHtml >?> extractorAt[String](attrsConfig, attr) filter(_.nonEmpty)
 
-    val endingAt = query[DateTime]("ending-at").fold[DateTime](new DateTime(0))(
+    def queryType[T: ClassTag](attr: String): Option[T] =
+      contentHtml >?> extractorAt[T](attrsConfig, attr)
+
+    val endingAt = queryType[DateTime]("ending-at").fold(new DateTime(0))(
       _.withZone(DateTimeZone.getDefault()))
 
-    val currentBid = query[String]("current-bid").fold[Currency](null)(Currency.parse)
-    val buyNowPrice = query[String]("buy-now-price").fold[Currency](null)(Currency.parse)
+    val currentBid = query("current-bid").fold[Currency](null)(Currency.parse)
+    val buyNowPrice = query("buy-now-price").fold[Currency](null)(Currency.parse)
 
-    val shippingCost = query[String]("shipping-cost") match {
+    val shippingCost = query("shipping-cost") match {
       case None => null
       case Some("FREE") if currentBid == null => null
       case Some("FREE") => Currency(currentBid.symbol, 0.0)
@@ -51,78 +54,68 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
     }
 
     Auction(auctionId,
-      title = query[String]("title").getOrElse(""),
+      title = query("title").getOrElse(""),
       endingAt = endingAt,
       seller = Seller(
-        id = query[String]("seller.id").orNull,
-        feedback = query[String]("seller.feedback").fold(0)(_.toInt),
-        positivePercentage = query[String]("seller.positive-percentage").fold(100.0)(_.toDouble)),
+        id = query("seller.id").orNull,
+        feedback = query("seller.feedback").fold(0)(_.toInt),
+        positivePercentage = query("seller.positive-percentage").fold(100.0)(_.toDouble)),
       currentBid = currentBid,
-      bidCount = query[String]("bid-count").fold(0)(_.toInt),
+      bidCount = query("bid-count").fold(0)(_.toInt),
       buyNowPrice = buyNowPrice,
-      location = query[String]("location").orNull,
+      location = query("location").orNull,
       shippingCost = shippingCost,
-      thumbnailUrl = query[String]("thumbnail-url").orNull)
+      thumbnailUrl = query("thumbnail-url").orNull)
   }
 
-  def bidFormURL(auctionId: String, bid: Currency) =
-    replaceVars(siteConfig.getString("bid-form.uri-template"),
+  def bidFormUrl(auctionId: String, bid: Currency) =
+    siteConf.getString("bid-form.uri-template").resolveVars(
       Map("auctionId" -> auctionId, "bidValue" -> bid.value.toString))
 
   def bid(auctionId: String, bid: Currency, quantity: Int): Int = {
     loginMgr.login()
     log.debug("Bidding {} on item {}", bid, auctionId, null)
 
-    def errorStatusCodeFor(doc: Document, errorDefsPath: String, desc: String): Int =
-      siteConfig.getConfigList(errorDefsPath).toStream.flatMap { errorDef =>
-        doc.selectFromConfig(errorDef.getConfig("select")).asInstanceOf[Option[String]].flatMap { content =>
-          errorDef.getString("match").r.findFirstIn(content).map { _ =>
-            val status = errorDef.getInt("status")
-            log.warn("Bid on item {} not successful: {} (code {})",
-              auctionId, BiddingClient.statusMessage(status), status.toString)
-            status
-          }
-        }
-      }.headOption.getOrElse {
-        log.error("Bid on item {} not successful: {} (code -1)",
-          auctionId, BiddingClient.statusMessage(-1), null)
-        dumpErrorPage(s"$desc-$auctionId-${System.currentTimeMillis()}.html", doc.outerHtml)
-        -1
+    def validate(doc: Document, succPath: String, errorsPath: String, desc: String): Option[Int] = {
+      val succ = matcherAt[Int](siteConf, succPath)
+      val errors = matchersAt[Int](siteConf, errorsPath)
+
+      doc ~/~ (succ, errors, -1) match {
+        case VSuccess(_) => None
+
+        case VFailure(status) =>
+          log.warn("Bid on item {} not successful: {} (code {})",
+            auctionId, BiddingClient.statusMessage(status), status.toString)
+
+          if(status == -1)
+            dumpErrorPage(s"$desc-$auctionId-${System.currentTimeMillis()}.html", doc.outerHtml)
+          Some(status)
       }
+    }
 
     def processBidFormHtml(bidFormHtml: Document): Int = {
-      val bidForm = bidFormHtml.getElementById("reviewbid")
+      val formExtractor = Extract.formDataAndAction(siteConf.getString("bid-form.form-query"))
 
-      if(bidForm == null || bidForm.select("input[name=confirmbid][type=submit]").isEmpty)
-        errorStatusCodeFor(bidFormHtml, "bid-form.error-statuses", "bid-form")
-      else {
-        val bidFormData = bidForm.extractFormData
-        val bidConfirmHtml = browser.post(bidForm.attr("action"), bidFormData)
-        processBidConfirmHtml(bidConfirmHtml)
+      validate(bidFormHtml, "bid-form.success-status", "bid-form.error-statuses", "bid-form") match {
+        case Some(status) => status
+        case None =>
+          val (bidFormData, bidAction) = bidFormHtml >> formExtractor
+          val bidConfirmHtml = browser.post(bidAction, bidFormData)
+          processBidConfirmHtml(bidConfirmHtml)
       }
     }
 
     def processBidConfirmHtml(bidConfirmHtml: Document): Int = {
-      if(bidConfirmHtml.egrep(siteConfig.getString("bid-confirm.success-message")).isEmpty) {
-        errorStatusCodeFor(bidConfirmHtml, "bid-confirm.error-statuses", "bid-confirm")
-      }
-      else {
-        log.debug("Successful bid on item {}", auctionId)
-        4
+      validate(bidConfirmHtml, "bid-confirm.success-status", "bid-confirm.error-statuses", "bid-form") match {
+        case Some(status) => status
+        case None =>
+          log.debug("Successful bid on item {}", auctionId)
+          4
       }
     }
 
-    val bidFormHtml = browser.get(bidFormURL(auctionId, bid))
+    val bidFormHtml = browser.get(bidFormUrl(auctionId, bid))
     processBidFormHtml(bidFormHtml)
-  }
-
-  private[this] def resolveKey(key: String, map: Map[String, String]) =
-    map.getOrElse(key, siteConfig.getString(key))
-
-  private[this] def replaceVars(str: String, map: Map[String, String]) = {
-    "\\{([^\\}]*)\\}".r.findAllIn(str).foldLeft(str) { (curr, key) =>
-      curr.replace(key, resolveKey(key.substring(1, key.length - 1), map))
-    }
   }
 
   private[this] val pageDumpingEnabled =

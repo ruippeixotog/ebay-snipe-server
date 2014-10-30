@@ -9,7 +9,7 @@ import spray.json._
 
 object JsonProtocol {
 
-  implicit def safeAnyJsonConvert[T](obj: T) = new {
+  implicit class SafeJsonConvertible[T](val obj: T) extends AnyVal {
     def safeJson(implicit writer: JsonWriter[T]): JsValue =
       if(obj == null) JsNull else writer.write(obj)
   }
