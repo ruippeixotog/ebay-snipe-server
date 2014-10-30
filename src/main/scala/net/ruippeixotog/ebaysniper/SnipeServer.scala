@@ -3,7 +3,7 @@ package net.ruippeixotog.ebaysniper
 import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import net.ruippeixotog.ebaysniper.JsonProtocol._
-import net.ruippeixotog.ebaysniper.browser.EbayClient
+import net.ruippeixotog.ebaysniper.ebay.EbayClient
 import net.ruippeixotog.ebaysniper.util.RoutingLogging
 import spray.http.StatusCodes.{Success => _, _}
 import spray.httpx.SprayJsonSupport._

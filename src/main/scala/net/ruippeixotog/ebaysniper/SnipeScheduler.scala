@@ -4,7 +4,7 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 
 import com.typesafe.config.ConfigFactory
-import net.ruippeixotog.ebaysniper.browser.BiddingClient
+import net.ruippeixotog.ebaysniper.ebay.BiddingClient
 
 import scala.util.Random
 

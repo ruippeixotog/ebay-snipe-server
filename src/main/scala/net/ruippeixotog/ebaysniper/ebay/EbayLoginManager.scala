@@ -1,4 +1,4 @@
-package net.ruippeixotog.ebaysniper.browser
+package net.ruippeixotog.ebaysniper.ebay
 
 import com.typesafe.config.Config
 import net.ruippeixotog.ebaysniper.util.Implicits._

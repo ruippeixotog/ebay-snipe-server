@@ -1,4 +1,4 @@
-package net.ruippeixotog.ebaysniper.browser
+package net.ruippeixotog.ebaysniper.ebay
 
 import java.io.PrintStream
 

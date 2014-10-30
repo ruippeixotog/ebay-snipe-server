@@ -2,7 +2,7 @@ package net.ruippeixotog.ebaysniper
 
 import java.util.{Date, Timer}
 
-import net.ruippeixotog.ebaysniper.browser.BiddingClient
+import net.ruippeixotog.ebaysniper.ebay.BiddingClient
 import net.ruippeixotog.ebaysniper.model.Currency
 import net.ruippeixotog.ebaysniper.util.Implicits._
 import net.ruippeixotog.ebaysniper.util.Logging
