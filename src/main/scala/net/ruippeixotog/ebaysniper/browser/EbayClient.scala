@@ -106,7 +106,7 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
     }
 
     def processBidConfirmHtml(bidConfirmHtml: Document): Int = {
-      validate(bidConfirmHtml, "bid-confirm.success-status","bid-confirm.error-statuses", "bid-form") match {
+      validate(bidConfirmHtml, "bid-confirm.success-status", "bid-confirm.error-statuses", "bid-form") match {
         case Some(status) => status
         case None =>
           log.debug("Successful bid on item {}", auctionId)
