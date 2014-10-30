@@ -4,7 +4,6 @@ import java.io.PrintStream
 
 import com.github.nscala_time.time.Imports._
 import com.typesafe.config.ConfigFactory
-import net.ruippeixotog.ebaysniper.browser.BiddingClient.BidStatus
 import net.ruippeixotog.ebaysniper.model._
 import net.ruippeixotog.ebaysniper.util.Implicits._
 import net.ruippeixotog.ebaysniper.util.Logging
