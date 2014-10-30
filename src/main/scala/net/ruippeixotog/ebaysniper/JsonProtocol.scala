@@ -23,7 +23,7 @@ object JsonProtocol {
   }
 
   implicit object DateTimeJsonProtocol extends JsonWriter[DateTime] {
-    override def write(date: DateTime) = JsString(date.toString())
+    override def write(date: DateTime) = JsString(date.toString)
   }
 
   implicit object CurrencyJsonProtocol extends JsonWriter[Currency] {
@@ -55,7 +55,7 @@ object JsonProtocol {
     ).toJson
   }
 
-  implicit object SnipeInfoJsonProcotol extends RootJsonFormat[SnipeInfo] {
+  implicit object SnipeInfoJsonProtocol extends RootJsonFormat[SnipeInfo] {
 
     override def read(json: JsValue) = {
       val jObj = json.asJsObject.fields

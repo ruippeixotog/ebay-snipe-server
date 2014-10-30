@@ -5,6 +5,7 @@ import java.util.concurrent.CancellationException
 
 import net.ruippeixotog.ebaysniper.JsonProtocol._
 import net.ruippeixotog.ebaysniper.SnipeServer._
+import net.ruippeixotog.ebaysniper.ebay.BiddingClient
 import net.ruippeixotog.ebaysniper.ebay.BiddingClient.BidStatus
 import spray.json.DefaultJsonProtocol._
 import spray.json._
@@ -15,6 +16,7 @@ import scala.util.{Failure, Success}
 
 trait SnipeManagement {
   implicit def executionContext: ExecutionContext
+  implicit def ebay: BiddingClient
 
   val snipesFile: Option[String] = None
 

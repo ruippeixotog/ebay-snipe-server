@@ -47,7 +47,7 @@ mappings in Universal <++= (resourceDirectory in Compile) map { resDir =>
 
 // ...and do not include them inside the JAR
 mappings in (Compile, packageBin) ~= { _.filterNot {
-  case (_, name) => confResources.contains(name)
+  case (_, resName) => confResources.contains(resName)
 }}
 
 // include the conf folder in the classpath when the start script is executed

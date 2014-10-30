@@ -37,7 +37,7 @@ The server currently supports the following HTTP endpoints:
 
   * **GET /auction/{auctionId}**
 
-  Retrives information about an auction from eBay.
+  Retrieves information about an auction from eBay.
 
   * **GET /auction/{auctionId}/snipe**
 
