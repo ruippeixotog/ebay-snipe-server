@@ -7,7 +7,7 @@ organization := "net.ruippeixotog"
 
 version := "0.2-SNAPSHOT"
 
-scalaVersion := "2.11.2"
+scalaVersion := "2.11.4"
 
 resolvers ++= Seq(
   "Spray repository" at "http://repo.spray.io",

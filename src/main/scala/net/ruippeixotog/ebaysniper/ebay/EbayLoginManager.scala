@@ -46,6 +46,6 @@ class EbayLoginManager(siteConf: Config, username: String, password: String)(
   private[this] lazy val signInFormExtractor =
     Extract.formDataAndAction(siteConf.getString("login-form.form-query"))
 
-  private[this] lazy val loginErrors = matchersAt[String](siteConf, "login-confirm.error-statuses")
-  private[this] lazy val loginWarnings = matchersAt[String](siteConf, "login-confirm.warn-statuses")
+  private[this] lazy val loginErrors = validatorsAt[String](siteConf, "login-confirm.error-statuses")
+  private[this] lazy val loginWarnings = validatorsAt[String](siteConf, "login-confirm.warn-statuses")
 }

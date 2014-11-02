@@ -77,8 +77,8 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
     log.debug("Bidding {} on item {}", bid, auctionId, null)
 
     def validate(doc: Document, succPath: String, errorsPath: String, desc: String): Option[String] = {
-      val succ = matcherAt[String](siteConf, succPath)
-      val errors = matchersAt[String](siteConf, errorsPath)
+      val succ = validatorAt(siteConf, succPath)
+      val errors = validatorsAt[String](siteConf, errorsPath)
 
       doc ~/~ (succ, errors, "unknown") match {
         case VSuccess(_) => None
