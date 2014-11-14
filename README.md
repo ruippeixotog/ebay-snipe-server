@@ -2,7 +2,7 @@
 
 A simple eBay [auction sniping](http://en.wikipedia.org/wiki/Auction_sniping) service that provides a RESTful API for managing scheduled snipes.
 
-It is written in Scala and makes use of a slightly modified version of the [JBidwatcher](https://github.com/cyberfox/jbidwatcher) source code for interacting with eBay.
+It is written in Scala and makes use of the [scala-scraper](https://github.com/ruippeixotog/scala-scraper) library for parsing content and interacting with eBay. Some concepts and ideas are inspired in [JBidwatcher](https://github.com/cyberfox/jbidwatcher).
 
 ## Configuration
 
@@ -19,7 +19,7 @@ You can look at `src/main/resources/reference.conf` to check for additional serv
 
 ## Building
 
-The server has [SBT](http://www.scala-sbt.org/) as a build dependency. If you do not have it installed yet and are using a Unix-based OS, I recommend using the [sbt-extras](https://github.com/paulp/sbt-extras) script.
+The server has [SBT](http://www.scala-sbt.org/) as a build dependency. If you do not have it installed yet and you are using a Unix-based OS, I recommend using the [sbt-extras](https://github.com/paulp/sbt-extras) script.
 
 You can start the server directly with SBT by running the `SnipeServer` main class. Alternatively, you can also create a self-contained package by running:
 
@@ -37,7 +37,7 @@ The server currently supports the following HTTP endpoints:
 
   * **GET /auction/{auctionId}**
 
-  Retrives information about an auction from eBay.
+  Retrieves information about an auction from eBay.
 
   * **GET /auction/{auctionId}/snipe**
 
@@ -74,4 +74,4 @@ The server currently supports the following HTTP endpoints:
 
 ## Copyright
 
-This repository contains a slightly modified version of the [JBidwatcher](https://github.com/cyberfox/jbidwatcher) source code. The license for that code, present in the `src/main/java/jbidwatcher` directory, is available [here](http://www.jbidwatcher.com/home/by-nc-sa-amended). All remaining code is [MIT licensed](http://opensource.org/licenses/MIT).
+Copyright (c) 2014 Rui Gonçalves. See LICENSE for details.

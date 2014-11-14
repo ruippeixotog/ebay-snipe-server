@@ -5,8 +5,10 @@ import java.util.concurrent.CancellationException
 
 import net.ruippeixotog.ebaysniper.JsonProtocol._
 import net.ruippeixotog.ebaysniper.SnipeServer._
-import spray.json._
+import net.ruippeixotog.ebaysniper.ebay.BiddingClient
+import net.ruippeixotog.ebaysniper.ebay.BiddingClient.BidStatus
 import spray.json.DefaultJsonProtocol._
+import spray.json._
 
 import scala.concurrent.ExecutionContext
 import scala.io.Source
@@ -14,6 +16,7 @@ import scala.util.{Failure, Success}
 
 trait SnipeManagement {
   implicit def executionContext: ExecutionContext
+  implicit def ebay: BiddingClient
 
   val snipesFile: Option[String] = None
 
@@ -61,12 +64,13 @@ trait SnipeManagement {
 
     snipe.activate().onComplete { res =>
       res match {
-        case Success(status) if Snipe.isSuccess(status) =>
-          log.info("Completed snipe {} with success status {}", snipe.info, status)
+        case Success(status) if BidStatus.isSuccess(status) =>
+          log.info("Completed snipe {} successfully - {}",
+            snipe.info, BidStatus.statusMessage(status), null)
 
         case Success(status) =>
-          log.warn("Completed snipe {} with error status {} - {}", snipe.info, status.toString,
-            Snipe.statusMessage(status))
+          log.warn("Completed snipe {} with errors - {}",
+            snipe.info, BidStatus.statusMessage(status), null)
 
         case Failure(e: CancellationException) =>
           log.info("The snipe {} was cancelled", snipe.info)

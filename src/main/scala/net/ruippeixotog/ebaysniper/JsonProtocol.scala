@@ -3,14 +3,13 @@ package net.ruippeixotog.ebaysniper
 import java.util.{Date => JDate}
 
 import com.github.nscala_time.time.Imports._
-import com.jbidwatcher.auction.{AuctionInfo, Seller}
-import com.jbidwatcher.util.Currency
+import net.ruippeixotog.ebaysniper.model._
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 object JsonProtocol {
 
-  implicit def safeAnyJsonConvert[T](obj: T) = new {
+  implicit class SafeJsonConvertible[T](val obj: T) extends AnyVal {
     def safeJson(implicit writer: JsonWriter[T]): JsValue =
       if(obj == null) JsNull else writer.write(obj)
   }
@@ -23,40 +22,40 @@ object JsonProtocol {
     override def write(date: JDate) = JsString(date.toLocalDateTime.toString)
   }
 
+  implicit object DateTimeJsonProtocol extends JsonWriter[DateTime] {
+    override def write(date: DateTime) = JsString(date.toString)
+  }
+
   implicit object CurrencyJsonProtocol extends JsonWriter[Currency] {
-    def write(cur: Currency) = if(cur.getCurrencyType == Currency.NONE) JsNull
-      else JsString(cur.fullCurrencyName + " " + cur.getValueString)
+    def write(cur: Currency) = JsString(cur.symbol + " " + cur.value)
   }
 
   implicit object SellerJsonProtocol extends RootJsonWriter[Seller] {
     override def write(s: Seller) = Map(
-      "id" -> s.getId.safeJson,
-      "name" -> s.getSeller.safeJson,
-      "feedback" -> s.getFeedback.safeJson,
-      "positivePercentage" -> s.getPositivePercentage.safeJson
+      "id" -> s.id.safeJson,
+      "feedback" -> s.feedback.safeJson,
+      "positivePercentage" -> s.positivePercentage.safeJson
     ).toJson
   }
 
-  implicit object AuctionInfoJsonProtocol extends RootJsonWriter[AuctionInfo] {
-    def write(a: AuctionInfo) = Map(
-      "id" -> a.getIdentifier.safeJson,
-      "title" -> a.getTitle.safeJson,
-      "endingAt" -> a.getEndDate.safeJson,
-      "ended" -> a.isComplete.toJson,
-      "seller" -> a.getSeller.safeJson,
-      "currentBid" -> a.getCurBid.safeJson,
-      "highestBidder" -> a.getHighBidder.safeJson,
-      "bidCount" -> a.getNumBids.safeJson,
-      "bidderCount" -> a.getNumBidders.safeJson,
-      "buyNowPrice" -> a.getBuyNow.safeJson,
-      "location" -> a.getItemLocation.safeJson,
-      "shippingCost" -> a.getShipping.safeJson,
-      "defaultCurrency" -> a.getDefaultCurrency.fullCurrencyName.safeJson,
-      "thumbnailUrl" -> a.getThumbnailURL.safeJson
+  implicit object AuctionInfoJsonProtocol extends RootJsonWriter[Auction] {
+    def write(a: Auction) = Map(
+      "id" -> a.id.safeJson,
+      "title" -> a.title.safeJson,
+      "endingAt" -> a.endingAt.safeJson,
+      "ended" -> a.ended.toJson,
+      "seller" -> a.seller.safeJson,
+      "currentBid" -> a.currentBid.safeJson,
+      "bidCount" -> a.bidCount.safeJson,
+      "buyNowPrice" -> a.buyNowPrice.safeJson,
+      "location" -> a.location.safeJson,
+      "shippingCost" -> a.shippingCost.safeJson,
+      "defaultCurrency" -> a.defaultCurrency.safeJson,
+      "thumbnailUrl" -> a.thumbnailUrl.safeJson
     ).toJson
   }
 
-  implicit object SnipeInfoJsonProcotol extends RootJsonFormat[SnipeInfo] {
+  implicit object SnipeInfoJsonProtocol extends RootJsonFormat[SnipeInfo] {
 
     override def read(json: JsValue) = {
       val jObj = json.asJsObject.fields
@@ -72,8 +71,8 @@ object JsonProtocol {
       }
 
       val bid = jObj.get("bid") match {
-        case Some(JsNumber(b)) => Currency.getCurrency(Currency.US_DOLLAR, b.toDouble)
-        case Some(JsString(str)) => Currency.getCurrency(str)
+        case Some(JsNumber(b)) => Currency("USD", b.toDouble)
+        case Some(JsString(str)) => Currency.parse(str)
         case _ => throw new DeserializationException("A valid bid must be provided")
       }
 
