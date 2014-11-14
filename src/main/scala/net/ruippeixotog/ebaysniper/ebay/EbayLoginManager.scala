@@ -27,13 +27,13 @@ class EbayLoginManager(siteConf: Config, username: String, password: String)(
     val (formData, signInAction) = browser.get(loginUrl) >> signInFormExtractor
     val signInData = formData + ("userid" -> username) + ("pass" -> password)
 
-    browser.post(signInAction, signInData) ~/~ loginErrors match {
+    browser.post(signInAction, signInData) errorIf loginErrors match {
       case VFailure(status) =>
         log.error("A problem occurred while signing in ({})", status)
         false
 
       case VSuccess(doc) =>
-        doc ~/~ loginWarnings match {
+        doc errorIf loginWarnings match {
           case VFailure(status) =>
             log.warn("A warning occurred while signing in ({})", status)
           case _ =>
