@@ -22,7 +22,7 @@ libraryDependencies ++= Seq(
   "io.spray"                   %% "spray-can"       % "1.3.2",
   "io.spray"                   %% "spray-json"      % "1.3.0",
   "io.spray"                   %% "spray-routing"   % "1.3.2",
-  "net.ruippeixotog"           %% "scala-scraper"   % "0.1-SNAPSHOT",
+  "net.ruippeixotog"           %% "scala-scraper"   % "0.1",
   "org.jsoup"                   % "jsoup"           % "1.8.1")
 
 scalacOptions ++= Seq(
