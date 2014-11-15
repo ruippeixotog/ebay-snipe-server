@@ -4,22 +4,42 @@ A simple eBay [auction sniping](http://en.wikipedia.org/wiki/Auction_sniping) se
 
 It is written in Scala and makes use of the [scala-scraper](https://github.com/ruippeixotog/scala-scraper) library for parsing content and interacting with eBay. Some concepts and ideas are inspired in [JBidwatcher](https://github.com/cyberfox/jbidwatcher).
 
-## Configuration
+## Quick Start
+
+The quickest way to get the service up is to use [Docker](https://www.docker.com/). An image is available on [Docker Hub](https://registry.hub.docker.com/u/ruippeixotog/ebay-snipe-server/) and can be started with the following command:
+
+```
+docker run -d -p 3647:3647 \
+  -e 'EBAY_USERNAME=<your_username>' -e 'EBAY_PASSWORD=<your_password>' \
+  ruippeixotog/ebay-snipe-server:0.2-SNAPSHOT
+```
+
+The web service will be available on port 3647. You can also optionally mount the volumes `/opt/docker/appdata` containing persistent application state and `/opt/docker/logs` containing application logs:
+
+```
+docker run -d -p 3647:3647 \
+  -e 'EBAY_USERNAME=<your_username>' -e 'EBAY_PASSWORD=<your_password>' \
+  -v '<path_to_appdata_in_host>:/opt/docker/appdata' \
+  -v '<path_to_logs_in_host>:/opt/docker/logs' \
+  ruippeixotog/ebay-snipe-server:0.2-SNAPSHOT
+```
+
+If you need to change the default configurations or fiddle with the source code, keep reading for instructions on how to build the project.
+
+## Building
+
+The server has [SBT](http://www.scala-sbt.org/) as a build dependency. If you do not have it installed yet and you are using a Unix-based OS, I recommend using the [sbt-extras](https://github.com/paulp/sbt-extras) script.
 
 The server must be given the eBay credentials to be used for bidding on auctions. Create a `src/main/resources/application.conf` file with the following content:
 
 ```
 ebay {
-  username = "<YOUR_EBAY_USERNAME_HERE>"
-  password = "<YOUR_EBAY_PASSWORD_HERE>"
+  username = "<your_username>"
+  password = "<your_password>"
 }
 ```
 
 You can look at `src/main/resources/reference.conf` to check for additional server settings you can override.
-
-## Building
-
-The server has [SBT](http://www.scala-sbt.org/) as a build dependency. If you do not have it installed yet and you are using a Unix-based OS, I recommend using the [sbt-extras](https://github.com/paulp/sbt-extras) script.
 
 You can start the server directly with SBT by running the `SnipeServer` main class. Alternatively, you can also create a self-contained package by running:
 
