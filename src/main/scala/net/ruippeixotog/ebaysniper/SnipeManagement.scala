@@ -18,7 +18,7 @@ trait SnipeManagement {
   implicit def executionContext: ExecutionContext
   implicit def ebay: BiddingClient
 
-  val snipesFile: Option[String] = None
+  val snipesFile: Option[File] = None
 
   // create the data structures and utilities for managing the snipe data
   private[this] var _snipes = Map.empty[String, Snipe]
@@ -32,7 +32,9 @@ trait SnipeManagement {
     snipesFile match {
       case Some(file) =>
         log.info("Using {} for persisting snipe data", file)
-        if(new File(file).exists()) {
+
+        file.getParentFile.mkdirs()
+        if(file.exists()) {
           for(sInfo <- Source.fromFile(file).mkString.parseJson.convertTo[List[SnipeInfo]]) {
             registerAndActivate(new Snipe(sInfo))
           }

@@ -1,5 +1,7 @@
 package net.ruippeixotog.ebaysniper
 
+import java.io.File
+
 import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import net.ruippeixotog.ebaysniper.JsonProtocol._
@@ -29,7 +31,7 @@ object SnipeServer extends App with SimpleRoutingApp with RoutingLogging with Sn
   log.info("Logging in into eBay")
   ebay.login()
 
-  override val snipesFile = Option(config.getString("sniper.snipes-file"))
+  override val snipesFile = Option(new File(config.getString("sniper.snipes-file")))
   loadSnipesFromFile()
 
   startServer("0.0.0.0", config.getInt("sniper.port")) {
