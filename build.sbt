@@ -31,6 +31,8 @@ scalacOptions ++= Seq(
   "-feature",
   "-language:implicitConversions")
 
+// -- general packaging settings --
+
 packageArchetype.java_server
 
 mainClass in Compile := Some("net.ruippeixotog.ebaysniper.SnipeServer")
@@ -55,3 +57,15 @@ mappings in (Compile, packageBin) ~= { _.filterNot {
 
 // include the conf folder in the classpath when the start script is executed
 scriptClasspath += "../conf"
+
+// -- Docker packaging settings --
+
+maintainer in Docker := "Rui Gonçalves <ruippeixotog@gmail.com>"
+
+daemonUser in Docker := "root" // the server must be able to write to mounted volumes
+
+dockerExposedPorts in Docker := Seq(3647)
+
+dockerExposedVolumes in Docker := Seq("/opt/docker/appdata", "/opt/docker/logs")
+
+dockerRepository := Some("ruippeixotog")
