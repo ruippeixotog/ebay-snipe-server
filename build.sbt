@@ -42,7 +42,10 @@ val confResources = Seq("application.conf", "logback.xml")
 
 // copy the confResources to the conf folder...
 mappings in Universal <++= (resourceDirectory in Compile) map { resDir =>
-  confResources.map { resName => resDir / resName -> ("conf/" + resName) }
+  confResources.flatMap { resName =>
+    val resFile = resDir / resName
+    if(resFile.exists) Some(resFile -> ("conf/" + resName)) else None
+  }
 }
 
 // ...and do not include them inside the JAR
