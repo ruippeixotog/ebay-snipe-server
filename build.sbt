@@ -7,22 +7,22 @@ organization := "net.ruippeixotog"
 
 version := "0.2-SNAPSHOT"
 
-scalaVersion := "2.11.4"
+scalaVersion := "2.11.6"
 
 resolvers ++= Seq(
   "Spray repository" at "http://repo.spray.io",
   Resolver.sonatypeRepo("snapshots"))
 
 libraryDependencies ++= Seq(
-  "ch.qos.logback"              % "logback-classic" % "1.1.2",
-  "com.github.nscala-time"     %% "nscala-time"     % "1.6.0",
+  "ch.qos.logback"              % "logback-classic" % "1.1.3",
+  "com.github.nscala-time"     %% "nscala-time"     % "1.8.0",
   "com.typesafe"                % "config"          % "1.2.1",
-  "com.typesafe.akka"          %% "akka-actor"      % "2.3.7",
-  "com.typesafe.akka"          %% "akka-slf4j"      % "2.3.7",
-  "io.spray"                   %% "spray-can"       % "1.3.2",
+  "com.typesafe.akka"          %% "akka-actor"      % "2.3.9",
+  "com.typesafe.akka"          %% "akka-slf4j"      % "2.3.9",
+  "io.spray"                   %% "spray-can"       % "1.3.3",
   "io.spray"                   %% "spray-json"      % "1.3.1",
-  "io.spray"                   %% "spray-routing"   % "1.3.2",
-  "net.ruippeixotog"           %% "scala-scraper"   % "0.1.1",
+  "io.spray"                   %% "spray-routing"   % "1.3.3",
+  "net.ruippeixotog"           %% "scala-scraper"   % "0.1.2-SNAPSHOT",
   "org.jsoup"                   % "jsoup"           % "1.8.1")
 
 scalacOptions ++= Seq(
