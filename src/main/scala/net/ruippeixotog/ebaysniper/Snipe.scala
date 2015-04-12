@@ -1,13 +1,13 @@
 package net.ruippeixotog.ebaysniper
 
-import java.util.{Date, Timer}
+import java.util.{ Date, Timer }
 
 import net.ruippeixotog.ebaysniper.ebay.BiddingClient
 import net.ruippeixotog.ebaysniper.model.Currency
 import net.ruippeixotog.ebaysniper.util.Implicits._
 import net.ruippeixotog.ebaysniper.util.Logging
 
-import scala.concurrent.{CancellationException, Future, Promise}
+import scala.concurrent.{ CancellationException, Future, Promise }
 import scala.util.Try
 
 case class SnipeInfo(auctionId: String, description: String, bid: Currency,
@@ -19,7 +19,7 @@ class Snipe(val info: SnipeInfo)(implicit ebay: BiddingClient) extends Logging {
   private[this] var promise: Promise[String] = null
 
   def activate(): Future[String] = {
-    if(promise != null) promise.future
+    if (promise != null) promise.future
     else {
       promise = Promise[String]()
       timer = new Timer(s"${info.auctionId}-snipe", true)
@@ -34,7 +34,7 @@ class Snipe(val info: SnipeInfo)(implicit ebay: BiddingClient) extends Logging {
     }
   }
 
-  def cancel(): Unit = if(promise != null) {
+  def cancel(): Unit = if (promise != null) {
     timer.cancel()
     promise.failure(new CancellationException)
     promise = null

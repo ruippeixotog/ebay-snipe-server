@@ -1,7 +1,7 @@
 package net.ruippeixotog.ebaysniper.util
 
 import org.slf4j.LoggerFactory
-import spray.routing.{Directive0, HttpService}
+import spray.routing.{ Directive0, HttpService }
 
 trait Logging {
   lazy val log = LoggerFactory.getLogger(getClass.getName)

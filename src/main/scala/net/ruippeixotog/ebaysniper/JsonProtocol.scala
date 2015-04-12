@@ -1,6 +1,6 @@
 package net.ruippeixotog.ebaysniper
 
-import java.util.{Date => JDate}
+import java.util.{ Date => JDate }
 
 import com.github.nscala_time.time.Imports._
 import net.ruippeixotog.ebaysniper.model._
@@ -11,7 +11,7 @@ object JsonProtocol {
 
   implicit class SafeJsonConvertible[T](val obj: T) extends AnyVal {
     def safeJson(implicit writer: JsonWriter[T]): JsValue =
-      if(obj == null) JsNull else writer.write(obj)
+      if (obj == null) JsNull else writer.write(obj)
   }
 
   implicit object IntegerJsonProtocol extends JsonWriter[Integer] {

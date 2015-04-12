@@ -18,7 +18,7 @@ case class SnipeScheduler()(implicit ebay: BiddingClient) {
   def snipeTimeFor(auctionId: String, hintTime: Option[Date] = None): Option[Date] = {
     val endTime = ebay.auctionInfo(auctionId).endingAt.getMillis
 
-    if(System.currentTimeMillis() > endTime) None
+    if (System.currentTimeMillis() > endTime) None
     else {
       val proposedTime = hintTime match {
         case None => endTime - meanMargin + (Random.nextGaussian() * stdevMargin).toLong

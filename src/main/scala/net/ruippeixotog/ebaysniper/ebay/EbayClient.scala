@@ -35,7 +35,7 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
     val contentHtml = browser.get(auctionInfoUrl(auctionId)) >> contentExtractor
 
     def query(attr: String): Option[String] =
-      contentHtml >?> extractorAt[String](attrsConfig, attr) filter(_.nonEmpty)
+      contentHtml >?> extractorAt[String](attrsConfig, attr) filter (_.nonEmpty)
 
     def queryType[T: ClassTag](attr: String): Option[T] =
       contentHtml >?> extractorAt[T](attrsConfig, attr)
@@ -86,7 +86,7 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
         case VFailure(status) =>
           log.warn("Bid on item {} not successful: {}", auctionId, status, null)
 
-          if(status == "unknown")
+          if (status == "unknown")
             dumpErrorPage(s"$desc-$auctionId-${System.currentTimeMillis()}.html", doc.outerHtml)
           Some(status)
       }
@@ -124,5 +124,5 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
     ConfigFactory.load.getString("ebay.debug.dumped-pages-dir")
 
   private[this] def dumpErrorPage(filename: String, content: => String) =
-    if(pageDumpingEnabled) new PrintStream(s"$dumpedPagesDir/$filename").use(_.println(content))
+    if (pageDumpingEnabled) new PrintStream(s"$dumpedPagesDir/$filename").use(_.println(content))
 }

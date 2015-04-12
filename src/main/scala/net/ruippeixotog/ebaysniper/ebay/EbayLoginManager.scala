@@ -5,8 +5,8 @@ import net.ruippeixotog.ebaysniper.util.Implicits._
 import net.ruippeixotog.ebaysniper.util.Logging
 import net.ruippeixotog.scalascraper.browser.Browser
 import net.ruippeixotog.scalascraper.dsl.DSL._
-import net.ruippeixotog.scalascraper.scraper.{ContentExtractors => Extract}
-import net.ruippeixotog.scalascraper.util.Validated.{VFailure, VSuccess}
+import net.ruippeixotog.scalascraper.scraper.{ ContentExtractors => Extract }
+import net.ruippeixotog.scalascraper.util.Validated.{ VFailure, VSuccess }
 
 class EbayLoginManager(siteConf: Config, username: String, password: String)(
     implicit browser: Browser) extends Logging {
@@ -14,7 +14,7 @@ class EbayLoginManager(siteConf: Config, username: String, password: String)(
   implicit private[this] def defaultConf = siteConf
 
   def login(): Boolean = {
-    if(browser.cookies.contains("shs")) true
+    if (browser.cookies.contains("shs")) true
     else forceLogin()
   }
 

@@ -1,6 +1,6 @@
 package net.ruippeixotog.ebaysniper
 
-import java.io.{File, PrintStream}
+import java.io.{ File, PrintStream }
 import java.util.concurrent.CancellationException
 
 import net.ruippeixotog.ebaysniper.JsonProtocol._
@@ -12,7 +12,7 @@ import spray.json._
 
 import scala.concurrent.ExecutionContext
 import scala.io.Source
-import scala.util.{Failure, Success}
+import scala.util.{ Failure, Success }
 
 trait SnipeManagement {
   implicit def executionContext: ExecutionContext
@@ -34,8 +34,8 @@ trait SnipeManagement {
         log.info("Using {} for persisting snipe data", file)
 
         file.getParentFile.mkdirs()
-        if(file.exists()) {
-          for(sInfo <- Source.fromFile(file).mkString.parseJson.convertTo[List[SnipeInfo]]) {
+        if (file.exists()) {
+          for (sInfo <- Source.fromFile(file).mkString.parseJson.convertTo[List[SnipeInfo]]) {
             registerAndActivate(new Snipe(sInfo))
           }
         }
@@ -79,7 +79,7 @@ trait SnipeManagement {
 
         case Failure(e) => log.error(s"The snipe ${snipe.info} failed", e)
       }
-      if(snipes.get(auctionId) == Some(snipe)) {
+      if (snipes.get(auctionId) == Some(snipe)) {
         _snipes -= auctionId
         saveSnipesToFile()
       }

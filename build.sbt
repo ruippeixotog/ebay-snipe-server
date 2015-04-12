@@ -1,3 +1,5 @@
+import scalariform.formatter.preferences._
+
 name := "ebay-snipe-server"
 
 organization := "net.ruippeixotog"
@@ -21,6 +23,11 @@ libraryDependencies ++= Seq(
   "io.spray"                   %% "spray-routing"   % "1.3.3",
   "net.ruippeixotog"           %% "scala-scraper"   % "0.1.2-SNAPSHOT",
   "org.jsoup"                   % "jsoup"           % "1.8.1")
+
+scalariformSettings
+
+ScalariformKeys.preferences := ScalariformKeys.preferences.value.
+  setPreference(AlignParameters, true)
 
 scalacOptions ++= Seq(
   "-deprecation",

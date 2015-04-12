@@ -8,10 +8,10 @@ import net.ruippeixotog.ebaysniper.JsonProtocol._
 import net.ruippeixotog.ebaysniper.ebay.EbayClient
 import net.ruippeixotog.ebaysniper.util.RoutingLogging
 import org.jsoup.HttpStatusException
-import spray.http.StatusCodes.{Success => _, _}
+import spray.http.StatusCodes.{ Success => _, _ }
 import spray.httpx.SprayJsonSupport._
 import spray.json.DefaultJsonProtocol._
-import spray.routing.{ExceptionHandler, SimpleRoutingApp}
+import spray.routing.{ ExceptionHandler, SimpleRoutingApp }
 import spray.util.LoggingContext
 
 object SnipeServer extends App with SimpleRoutingApp with RoutingLogging with SnipeManagement {
@@ -52,6 +52,7 @@ object SnipeServer extends App with SimpleRoutingApp with RoutingLogging with Sn
     }
   }
 
+  // format: OFF
   startServer("0.0.0.0", config.getInt("sniper.port")) {
     handleExceptions(ebayHttpExceptionHandler) {
       logServiceRequest {
@@ -98,4 +99,5 @@ object SnipeServer extends App with SimpleRoutingApp with RoutingLogging with Sn
       }
     }
   }
+  // format: ON
 }
