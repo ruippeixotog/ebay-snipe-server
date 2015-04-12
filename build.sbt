@@ -1,6 +1,3 @@
-import com.typesafe.sbt.SbtNativePackager._
-import NativePackagerKeys._
-
 name := "ebay-snipe-server"
 
 organization := "net.ruippeixotog"
@@ -33,7 +30,7 @@ scalacOptions ++= Seq(
 
 // -- general packaging settings --
 
-packageArchetype.java_server
+enablePlugins(JavaServerAppPackaging)
 
 mainClass in Compile := Some("net.ruippeixotog.ebaysniper.SnipeServer")
 
