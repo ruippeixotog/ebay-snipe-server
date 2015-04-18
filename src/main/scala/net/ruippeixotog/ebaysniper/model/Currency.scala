@@ -1,5 +1,7 @@
 package net.ruippeixotog.ebaysniper.model
 
+import java.text.ParseException
+
 case class Currency(symbol: String, value: Double) {
   override def toString = s"$symbol $value"
 }
@@ -11,8 +13,10 @@ object Currency {
       SymbolTable.get(str.substring(0, len))
     }.headOption.getOrElse(Unknown.symbol)
 
-    val value = DoubleRegex.findFirstIn(str).get.toDouble
-    Currency(symbol, value)
+    DoubleRegex.findFirstIn(str) match {
+      case Some(v) => Currency(symbol, v.toDouble)
+      case None => throw new ParseException(s"Could not parse '$str' into a Currency", 0)
+    }
   }
 
   final val SymbolTable = Map(
