@@ -14,6 +14,13 @@ object JsonProtocol {
       if (obj == null) JsNull else writer.write(obj)
   }
 
+  implicit def OptionWriter[T: JsonWriter] = new JsonWriter[Option[T]] {
+    override def write(opt: Option[T]) = opt match {
+      case Some(x) => x.toJson
+      case None => JsNull
+    }
+  }
+
   implicit object IntegerJsonProtocol extends JsonWriter[Integer] {
     override def write(n: Integer) = JsNumber(n)
   }

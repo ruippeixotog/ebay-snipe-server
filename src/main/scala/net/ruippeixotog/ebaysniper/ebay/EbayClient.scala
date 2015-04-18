@@ -43,13 +43,12 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
     val endingAt = queryType[DateTime]("ending-at").fold(new DateTime(0))(
       _.withZone(DateTimeZone.getDefault()))
 
-    val currentBid = query("current-bid").fold[Currency](null)(Currency.parse)
-    val buyNowPrice = query("buy-now-price").fold[Currency](null)(Currency.parse)
+    val currentBid = query("current-bid").map(Currency.parse)
+    val buyNowPrice = query("buy-now-price").map(Currency.parse)
 
     val shippingCost = query("shipping-cost") match {
-      case None => null
-      case Some("FREE") if currentBid == null => null
-      case Some("FREE") => Currency(currentBid.symbol, 0.0)
+      case None => Currency.Unknown
+      case Some("FREE") => currentBid.orElse(buyNowPrice).fold(Currency.Unknown)(_.copy(value = 0.0))
       case Some(price) => Currency.parse(price)
     }
 

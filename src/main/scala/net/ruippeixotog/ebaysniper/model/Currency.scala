@@ -9,7 +9,7 @@ object Currency {
   def parse(str: String) = {
     val symbol = (str.length to 1 by -1).toStream.flatMap { len =>
       SymbolTable.get(str.substring(0, len))
-    }.headOption.getOrElse("UNK")
+    }.headOption.getOrElse(Unknown.symbol)
 
     val value = DoubleRegex.findFirstIn(str).get.toDouble
     Currency(symbol, value)
@@ -25,6 +25,8 @@ object Currency {
     "NT$" -> "TWD", "nt$" -> "TWD", "NTD" -> "TWD",
     "HK$" -> "HKD", "hk$" -> "HKD", "HKD" -> "HKD",
     "INR" -> "INR", "inr" -> "INR")
+
+  final val Unknown = Currency("UNK", 0.0)
 
   final val DoubleRegex = "\\d\\d*(\\.\\d)?\\d*".r
 }
