@@ -21,23 +21,23 @@ object JsonProtocol {
     }
   }
 
-  implicit object IntegerJsonProtocol extends JsonWriter[Integer] {
+  implicit object IntegerJsonWriter extends JsonWriter[Integer] {
     override def write(n: Integer) = JsNumber(n)
   }
 
-  implicit object JDateJsonProtocol extends JsonWriter[JDate] {
+  implicit object JDateJsonWriter extends JsonWriter[JDate] {
     override def write(date: JDate) = JsString(date.toLocalDateTime.toString)
   }
 
-  implicit object DateTimeJsonProtocol extends JsonWriter[DateTime] {
+  implicit object DateTimeJsonWriter extends JsonWriter[DateTime] {
     override def write(date: DateTime) = JsString(date.toString)
   }
 
-  implicit object CurrencyJsonProtocol extends JsonWriter[Currency] {
+  implicit object CurrencyJsonWriter extends JsonWriter[Currency] {
     def write(cur: Currency) = JsString(cur.symbol + " " + cur.value)
   }
 
-  implicit object SellerJsonProtocol extends RootJsonWriter[Seller] {
+  implicit object SellerJsonWriter extends RootJsonWriter[Seller] {
     override def write(s: Seller) = Map(
       "id" -> s.id.safeJson,
       "feedback" -> s.feedback.safeJson,
@@ -45,7 +45,7 @@ object JsonProtocol {
     ).toJson
   }
 
-  implicit object AuctionInfoJsonProtocol extends RootJsonWriter[Auction] {
+  implicit object AuctionJsonWriter extends RootJsonWriter[Auction] {
     def write(a: Auction) = Map(
       "id" -> a.id.safeJson,
       "title" -> a.title.safeJson,
