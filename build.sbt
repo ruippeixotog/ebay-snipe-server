@@ -21,8 +21,7 @@ libraryDependencies ++= Seq(
   "io.spray"                   %% "spray-can"       % "1.3.3",
   "io.spray"                   %% "spray-json"      % "1.3.2",
   "io.spray"                   %% "spray-routing"   % "1.3.3",
-  "net.ruippeixotog"           %% "scala-scraper"   % "0.1.2-SNAPSHOT",
-  "org.jsoup"                   % "jsoup"           % "1.8.2")
+  "net.ruippeixotog"           %% "scala-scraper"   % "0.1.2-SNAPSHOT")
 
 scalariformSettings
 
