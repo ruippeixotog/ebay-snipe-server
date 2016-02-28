@@ -41,8 +41,7 @@ object JsonProtocol {
     override def write(s: Seller) = Map(
       "id" -> s.id.safeJson,
       "feedback" -> s.feedback.safeJson,
-      "positivePercentage" -> s.positivePercentage.safeJson
-    ).toJson
+      "positivePercentage" -> s.positivePercentage.safeJson).toJson
   }
 
   implicit object AuctionJsonWriter extends RootJsonWriter[Auction] {
@@ -58,8 +57,7 @@ object JsonProtocol {
       "location" -> a.location.safeJson,
       "shippingCost" -> a.shippingCost.safeJson,
       "defaultCurrency" -> a.defaultCurrency.safeJson,
-      "thumbnailUrl" -> a.thumbnailUrl.safeJson
-    ).toJson
+      "thumbnailUrl" -> a.thumbnailUrl.safeJson).toJson
   }
 
   implicit object SnipeInfoJsonProtocol extends RootJsonFormat[SnipeInfo] {
@@ -102,7 +100,6 @@ object JsonProtocol {
       "description" -> info.description.safeJson,
       "bid" -> info.bid.safeJson,
       "quantity" -> info.quantity.safeJson,
-      "snipeTime" -> info.snipeTime.orNull.safeJson
-    ).toJson
+      "snipeTime" -> info.snipeTime.orNull.safeJson).toJson
   }
 }

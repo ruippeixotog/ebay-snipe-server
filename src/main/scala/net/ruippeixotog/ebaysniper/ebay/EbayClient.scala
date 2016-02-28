@@ -52,7 +52,8 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
       case Some(price) => Currency.parse(price)
     }
 
-    Auction(auctionId,
+    Auction(
+      auctionId,
       title = query("title").getOrElse(""),
       endingAt = endingAt,
       seller = Seller(

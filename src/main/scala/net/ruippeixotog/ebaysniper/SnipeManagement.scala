@@ -67,17 +67,16 @@ trait SnipeManagement {
     snipe.activate().onComplete { res =>
       res match {
         case Success(status) if BidStatus.isSuccess(status) =>
-          log.info("Completed snipe {} successfully - {}",
-            snipe.info, BidStatus.statusMessage(status), null)
+          log.info("Completed snipe {} successfully - {}", snipe.info, BidStatus.statusMessage(status), null)
 
         case Success(status) =>
-          log.warn("Completed snipe {} with errors - {}",
-            snipe.info, BidStatus.statusMessage(status), null)
+          log.warn("Completed snipe {} with errors - {}", snipe.info, BidStatus.statusMessage(status), null)
 
         case Failure(e: CancellationException) =>
           log.info("The snipe {} was cancelled", snipe.info)
 
-        case Failure(e) => log.error(s"The snipe ${snipe.info} failed", e)
+        case Failure(e) =>
+          log.error(s"The snipe ${snipe.info} failed", e)
       }
       if (snipes.get(auctionId) == Some(snipe)) {
         _snipes -= auctionId

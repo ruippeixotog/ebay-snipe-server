@@ -9,7 +9,8 @@ import net.ruippeixotog.scalascraper.scraper.{ ContentExtractors => Extract }
 import net.ruippeixotog.scalascraper.util.Validated.{ VFailure, VSuccess }
 
 class EbayLoginManager(siteConf: Config, username: String, password: String)(
-    implicit browser: Browser) extends Logging {
+    implicit
+    browser: Browser) extends Logging {
 
   implicit private[this] def defaultConf = siteConf
 
