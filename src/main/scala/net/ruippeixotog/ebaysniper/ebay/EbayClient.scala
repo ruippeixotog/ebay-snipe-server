@@ -7,15 +7,15 @@ import com.typesafe.config.ConfigFactory
 import net.ruippeixotog.ebaysniper.model._
 import net.ruippeixotog.ebaysniper.util.Implicits._
 import net.ruippeixotog.ebaysniper.util.Logging
-import net.ruippeixotog.scalascraper.browser.Browser
+import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL._
+import net.ruippeixotog.scalascraper.model.Document
 import net.ruippeixotog.scalascraper.util.Validated._
-import org.jsoup.nodes.Document
 
 import scala.reflect.ClassTag
 
 class EbayClient(site: String, username: String, password: String) extends BiddingClient with Logging {
-  implicit val browser = new Browser
+  implicit val browser = new JsoupBrowser()
 
   implicit val siteConf =
     ConfigFactory.load.getConfig(s"ebay.sites-config.${site.replace('.', '-')}").
@@ -87,7 +87,7 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
           log.warn("Bid on item {} not successful: {}", auctionId, status, null)
 
           if (status == "unknown")
-            dumpErrorPage(s"$desc-$auctionId-${System.currentTimeMillis()}.html", doc.outerHtml)
+            dumpErrorPage(s"$desc-$auctionId-${System.currentTimeMillis()}.html", doc.toHtml)
           Some(status)
       }
     }

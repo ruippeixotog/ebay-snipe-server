@@ -3,14 +3,14 @@ package net.ruippeixotog.ebaysniper.ebay
 import com.typesafe.config.Config
 import net.ruippeixotog.ebaysniper.util.Implicits._
 import net.ruippeixotog.ebaysniper.util.Logging
-import net.ruippeixotog.scalascraper.browser.Browser
+import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.scraper.{ ContentExtractors => Extract }
 import net.ruippeixotog.scalascraper.util.Validated.{ VFailure, VSuccess }
 
 class EbayLoginManager(siteConf: Config, username: String, password: String)(
     implicit
-    browser: Browser) extends Logging {
+    browser: JsoupBrowser) extends Logging {
 
   implicit private[this] def defaultConf = siteConf
 
