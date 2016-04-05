@@ -13,15 +13,15 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots"))
 
 libraryDependencies ++= Seq(
-  "com.github.nscala-time"     %% "nscala-time"     % "2.10.0",
+  "com.github.nscala-time"     %% "nscala-time"     % "2.12.0",
   "com.typesafe"                % "config"          % "1.3.0",
-  "com.typesafe.akka"          %% "akka-actor"      % "2.4.2",
-  "com.typesafe.akka"          %% "akka-slf4j"      % "2.4.2",
+  "com.typesafe.akka"          %% "akka-actor"      % "2.4.3",
+  "com.typesafe.akka"          %% "akka-slf4j"      % "2.4.3",
   "io.spray"                   %% "spray-can"       % "1.3.3",
   "io.spray"                   %% "spray-json"      % "1.3.2",
   "io.spray"                   %% "spray-routing"   % "1.3.3",
-  "net.ruippeixotog"           %% "scala-scraper"   % "1.0.0-SNAPSHOT",
-  "ch.qos.logback"              % "logback-classic" % "1.1.6"            % "runtime")
+  "net.ruippeixotog"           %% "scala-scraper"   % "1.0.0",
+  "ch.qos.logback"              % "logback-classic" % "1.1.7"            % "runtime")
 
 scalariformPreferences := scalariformPreferences.value
   .setPreference(DanglingCloseParenthesis, Prevent)
