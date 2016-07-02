@@ -20,7 +20,7 @@ libraryDependencies ++= Seq(
   "io.spray"                   %% "spray-can"       % "1.3.3",
   "io.spray"                   %% "spray-json"      % "1.3.2",
   "io.spray"                   %% "spray-routing"   % "1.3.3",
-  "net.ruippeixotog"           %% "scala-scraper"   % "1.0.0",
+  "net.ruippeixotog"           %% "scala-scraper"   % "1.1.0-SNAPSHOT",
   "ch.qos.logback"              % "logback-classic" % "1.1.7"            % "runtime")
 
 scalariformPreferences := scalariformPreferences.value
