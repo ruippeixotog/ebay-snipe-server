@@ -42,7 +42,10 @@ mainClass in Compile := Some("net.ruippeixotog.ebaysniper.SnipeServer")
 sources in (Compile, doc) := Nil
 
 // the resources to provide in the conf folder instead of inside the JAR file
-val confResources = Seq("application.conf", "logback.xml")
+val confResources = Seq("logback.xml")
+
+// the resources to ignore when packaging
+val excludedResources = Seq("application.conf")
 
 // copy the confResources to the conf folder...
 mappings in Universal <++= (resourceDirectory in Compile) map { resDir =>
@@ -54,7 +57,7 @@ mappings in Universal <++= (resourceDirectory in Compile) map { resDir =>
 
 // ...and do not include them inside the JAR
 mappings in (Compile, packageBin) ~= { _.filterNot {
-  case (_, resName) => confResources.contains(resName)
+  case (_, resName) => confResources.contains(resName) || excludedResources.contains(resName)
 }}
 
 // include the conf folder in the classpath when the start script is executed
