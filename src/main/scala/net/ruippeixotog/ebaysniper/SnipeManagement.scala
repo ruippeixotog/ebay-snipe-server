@@ -15,7 +15,7 @@ import scala.io.Source
 import scala.util.{ Failure, Success }
 
 trait SnipeManagement {
-  implicit def executionContext: ExecutionContext
+  implicit def ec: ExecutionContext
   implicit def ebay: BiddingClient
 
   val snipesFile: Option[File] = None

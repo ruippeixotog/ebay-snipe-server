@@ -1,27 +1,26 @@
 import scalariform.formatter.preferences._
 
 name := "ebay-snipe-server"
-
 organization := "net.ruippeixotog"
-
 version := "0.2-SNAPSHOT"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.2"
+
+resolvers += Resolver.sonatypeRepo("snapshots")
 
 resolvers ++= Seq(
-  "Spray repository" at "http://repo.spray.io",
   Resolver.sonatypeRepo("snapshots"))
 
 libraryDependencies ++= Seq(
-  "com.github.nscala-time"     %% "nscala-time"     % "2.12.0",
-  "com.typesafe"                % "config"          % "1.3.0",
-  "com.typesafe.akka"          %% "akka-actor"      % "2.4.3",
-  "com.typesafe.akka"          %% "akka-slf4j"      % "2.4.3",
-  "io.spray"                   %% "spray-can"       % "1.3.3",
-  "io.spray"                   %% "spray-json"      % "1.3.2",
-  "io.spray"                   %% "spray-routing"   % "1.3.3",
-  "net.ruippeixotog"           %% "scala-scraper"   % "1.1.0-SNAPSHOT",
-  "ch.qos.logback"              % "logback-classic" % "1.1.7"            % "runtime")
+  "com.github.nscala-time"     %% "nscala-time"                % "2.16.0",
+  "com.typesafe"                % "config"                     % "1.3.1",
+  "com.typesafe.akka"          %% "akka-actor"                 % "2.4.18",
+  "com.typesafe.akka"          %% "akka-http"                  % "10.0.6",
+  "com.typesafe.akka"          %% "akka-http-spray-json"       % "10.0.6",
+  "com.typesafe.akka"          %% "akka-slf4j"                 % "2.4.18",
+  "io.spray"                   %% "spray-json"                 % "1.3.3",
+  "net.ruippeixotog"           %% "scala-scraper"              % "1.2.1",
+  "ch.qos.logback"              % "logback-classic"            % "1.2.3"            % "runtime")
 
 scalariformPreferences := scalariformPreferences.value
   .setPreference(DanglingCloseParenthesis, Prevent)
@@ -48,9 +47,9 @@ val confResources = Seq("logback.xml")
 val excludedResources = Seq("application.conf")
 
 // copy the confResources to the conf folder...
-mappings in Universal <++= (resourceDirectory in Compile) map { resDir =>
+mappings in Universal := {
   confResources.flatMap { resName =>
-    val resFile = resDir / resName
+    val resFile = (resourceDirectory in Compile).value / resName
     if(resFile.exists) Some(resFile -> ("conf/" + resName)) else None
   }
 }
