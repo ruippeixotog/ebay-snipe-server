@@ -1,11 +1,12 @@
 package net.ruippeixotog.ebaysniper.ebay
 
 import com.typesafe.config.Config
+
 import net.ruippeixotog.ebaysniper.util.Implicits._
 import net.ruippeixotog.ebaysniper.util.Logging
 import net.ruippeixotog.scalascraper.browser.Browser
+import net.ruippeixotog.scalascraper.config.dsl.DSL._
 import net.ruippeixotog.scalascraper.dsl.DSL._
-import net.ruippeixotog.scalascraper.util.Validated.{ VFailure, VSuccess }
 
 class EbayLoginManager(siteConf: Config, username: String, password: String)(implicit browser: Browser)
     extends Logging {
@@ -27,13 +28,13 @@ class EbayLoginManager(siteConf: Config, username: String, password: String)(imp
     val signInData = formData + ("userid" -> username) + ("pass" -> password)
 
     browser.post(signInAction, signInData) errorIf loginErrors match {
-      case VFailure(status) =>
+      case Left(status) =>
         log.error("A problem occurred while signing in ({})", status)
         false
 
-      case VSuccess(doc) =>
+      case Right(doc) =>
         doc errorIf loginWarnings match {
-          case VFailure(status) =>
+          case Left(status) =>
             log.warn("A warning occurred while signing in ({})", status)
           case _ =>
         }

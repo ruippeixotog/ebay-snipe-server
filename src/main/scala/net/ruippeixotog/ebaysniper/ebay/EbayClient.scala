@@ -2,17 +2,18 @@ package net.ruippeixotog.ebaysniper.ebay
 
 import java.io.PrintStream
 
+import scala.reflect.ClassTag
+
 import com.github.nscala_time.time.Imports._
 import com.typesafe.config.ConfigFactory
+
 import net.ruippeixotog.ebaysniper.model._
 import net.ruippeixotog.ebaysniper.util.Implicits._
 import net.ruippeixotog.ebaysniper.util.Logging
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
+import net.ruippeixotog.scalascraper.config.dsl.DSL._
 import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.model.Document
-import net.ruippeixotog.scalascraper.util.Validated._
-
-import scala.reflect.ClassTag
 
 class EbayClient(site: String, username: String, password: String) extends BiddingClient with Logging {
   implicit val browser = new JsoupBrowser()
@@ -80,10 +81,10 @@ class EbayClient(site: String, username: String, password: String) extends Biddi
       val succ = validatorAt(siteConf, succPath)
       val errors = validatorsAt[String](siteConf, errorsPath)
 
-      doc ~/~ (succ, errors, "unknown") match {
-        case VSuccess(_) => None
+      doc >/~ (succ, errors, "unknown") match {
+        case Right(_) => None
 
-        case VFailure(status) =>
+        case Left(status) =>
           log.warn("Bid on item {} not successful: {}", auctionId, status, null)
 
           if (status == "unknown")

@@ -19,7 +19,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka"          %% "akka-http-spray-json"       % "10.0.6",
   "com.typesafe.akka"          %% "akka-slf4j"                 % "2.4.18",
   "io.spray"                   %% "spray-json"                 % "1.3.3",
-  "net.ruippeixotog"           %% "scala-scraper"              % "1.2.1",
+  "net.ruippeixotog"           %% "scala-scraper"              % "2.0.0-RC2",
+  "net.ruippeixotog"           %% "scala-scraper-config"       % "2.0.0-RC2",
   "ch.qos.logback"              % "logback-classic"            % "1.2.3"            % "runtime")
 
 scalariformPreferences := scalariformPreferences.value
