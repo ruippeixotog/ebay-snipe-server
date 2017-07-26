@@ -48,7 +48,7 @@ val confResources = Seq("logback.xml")
 val excludedResources = Seq("application.conf")
 
 // copy the confResources to the conf folder...
-mappings in Universal := {
+mappings in Universal ++= {
   confResources.flatMap { resName =>
     val resFile = (resourceDirectory in Compile).value / resName
     if(resFile.exists) Some(resFile -> ("conf/" + resName)) else None
