@@ -1,0 +1,20 @@
+language: scala
+scala:
+  - 2.12.2
+jdk:
+  - oraclejdk8
+services:
+  - docker
+
+script:
+  - sbt ++$TRAVIS_SCALA_VERSION clean test
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+      docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+      sbt ++$TRAVIS_SCALA_VERSION docker:publish;
+      fi
+
+cache:
+  directories:
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt/boot
