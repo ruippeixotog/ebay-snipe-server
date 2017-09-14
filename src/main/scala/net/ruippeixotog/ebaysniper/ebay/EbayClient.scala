@@ -16,7 +16,10 @@ import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.model.Document
 
 class EbayClient(site: String, username: String, password: String) extends BiddingClient with Logging {
-  implicit val browser = new JsoupBrowser()
+  implicit val browser = new JsoupBrowser(
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) " +
+      "AppleWebKit/537.36 (KHTML, like Gecko) " +
+      "Chrome/61.0.3163.79 Safari/537.36")
 
   implicit val siteConf =
     ConfigFactory.load.getConfig(s"ebay.sites-config.${site.replace('.', '-')}").
