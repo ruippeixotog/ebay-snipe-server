@@ -9,7 +9,7 @@ import net.ruippeixotog.scalascraper.config.dsl.DSL._
 import net.ruippeixotog.scalascraper.dsl.DSL._
 
 class EbayLoginManager(siteConf: Config, username: String, password: String)(implicit browser: Browser)
-    extends Logging {
+  extends Logging {
 
   implicit private[this] def defaultConf = siteConf
 

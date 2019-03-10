@@ -4,7 +4,7 @@ name := "ebay-snipe-server"
 organization := "net.ruippeixotog"
 version := "0.2-SNAPSHOT"
 
-scalaVersion := "2.12.2"
+scalaVersion := "2.12.8"
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 
@@ -12,20 +12,21 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots"))
 
 libraryDependencies ++= Seq(
-  "com.github.nscala-time"     %% "nscala-time"                % "2.16.0",
-  "com.typesafe"                % "config"                     % "1.3.1",
-  "com.typesafe.akka"          %% "akka-actor"                 % "2.4.19",
-  "com.typesafe.akka"          %% "akka-http"                  % "10.0.9",
-  "com.typesafe.akka"          %% "akka-http-spray-json"       % "10.0.9",
-  "com.typesafe.akka"          %% "akka-slf4j"                 % "2.4.19",
-  "io.spray"                   %% "spray-json"                 % "1.3.3",
-  "net.ruippeixotog"           %% "scala-scraper"              % "2.0.0",
-  "net.ruippeixotog"           %% "scala-scraper-config"       % "2.0.0",
+  "com.github.nscala-time"     %% "nscala-time"                % "2.22.0",
+  "com.typesafe"                % "config"                     % "1.3.3",
+  "com.typesafe.akka"          %% "akka-actor"                 % "2.5.21",
+  "com.typesafe.akka"          %% "akka-http"                  % "10.1.7",
+  "com.typesafe.akka"          %% "akka-http-spray-json"       % "10.1.7",
+  "com.typesafe.akka"          %% "akka-slf4j"                 % "2.5.21",
+  "com.typesafe.akka"          %% "akka-stream"                % "2.5.21",
+  "io.spray"                   %% "spray-json"                 % "1.3.5",
+  "net.ruippeixotog"           %% "scala-scraper"              % "2.1.0",
+  "net.ruippeixotog"           %% "scala-scraper-config"       % "2.1.0",
   "ch.qos.logback"              % "logback-classic"            % "1.2.3"            % "runtime")
 
 scalariformPreferences := scalariformPreferences.value
   .setPreference(DanglingCloseParenthesis, Prevent)
-  .setPreference(DoubleIndentClassDeclaration, true)
+  .setPreference(DoubleIndentConstructorArguments, true)
 
 scalacOptions ++= Seq(
   "-deprecation",
@@ -66,11 +67,7 @@ scriptClasspath += "../conf"
 // -- Docker packaging settings --
 
 maintainer in Docker := "Rui Gonçalves <ruippeixotog@gmail.com>"
-
 daemonUser in Docker := "root" // the server must be able to write to mounted volumes
-
 dockerExposedPorts in Docker := Seq(3647)
-
 dockerExposedVolumes in Docker := Seq("/opt/docker/appdata", "/opt/docker/logs")
-
 dockerRepository := Some("ruippeixotog")
