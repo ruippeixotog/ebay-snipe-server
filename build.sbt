@@ -67,7 +67,6 @@ scriptClasspath += "../conf"
 // -- Docker packaging settings --
 
 maintainer in Docker := "Rui Gonçalves <ruippeixotog@gmail.com>"
-daemonUser in Docker := "root" // the server must be able to write to mounted volumes
 dockerExposedPorts in Docker := Seq(3647)
 dockerExposedVolumes in Docker := Seq("/opt/docker/appdata", "/opt/docker/logs")
 dockerRepository := Some("ruippeixotog")
