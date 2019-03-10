@@ -2,7 +2,6 @@ import scalariform.formatter.preferences._
 
 name := "ebay-snipe-server"
 organization := "net.ruippeixotog"
-version := "0.2.1"
 
 scalaVersion := "2.12.8"
 
