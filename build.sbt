@@ -69,3 +69,7 @@ maintainer in Docker := "Rui Gonçalves <ruippeixotog@gmail.com>"
 dockerExposedPorts in Docker := Seq(3647)
 dockerExposedVolumes in Docker := Seq("/opt/docker/appdata", "/opt/docker/logs")
 dockerRepository := Some("ruippeixotog")
+
+// this is needed as otherwise the container can't seem to create logs/ and appdata/ folders
+daemonUser in Docker := "root"
+daemonUserUid in Docker := None
