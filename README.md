@@ -11,7 +11,7 @@ The quickest way to get the service up is to use [Docker](https://www.docker.com
 ```
 docker run -d -p 3647:3647 \
   -e 'EBAY_USERNAME=<your_username>' -e 'EBAY_PASSWORD=<your_password>' \
-  ruippeixotog/ebay-snipe-server:0.2-SNAPSHOT
+  ruippeixotog/ebay-snipe-server:0.2.2
 ```
 
 The web service will be available on port 3647. You can also optionally mount the volumes `/opt/docker/appdata` containing persistent application state and `/opt/docker/logs` containing application logs:
@@ -21,7 +21,7 @@ docker run -d -p 3647:3647 \
   -e 'EBAY_USERNAME=<your_username>' -e 'EBAY_PASSWORD=<your_password>' \
   -v '<path_to_appdata_in_host>:/opt/docker/appdata' \
   -v '<path_to_logs_in_host>:/opt/docker/logs' \
-  ruippeixotog/ebay-snipe-server:0.2-SNAPSHOT
+  ruippeixotog/ebay-snipe-server:0.2.2
 ```
 
 If you need to change the default configurations or fiddle with the source code, keep reading for instructions on how to build the project.
